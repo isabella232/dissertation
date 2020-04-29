@@ -30,6 +30,12 @@ In the WebRTC system there exists two major categories of authenticated entries:
 \subsubsection{Unauthenticated Entities}
 In cases apart from the entities outlined above, network elements are generally not identifiable, and therefore are un-trust-able. This does not negate the possibility of interaction, instead it means an assumption must be made that interactions are in-feasible \cite{rescorla2013webrtc}.
 
+\subsubsection{Origin and Web Security Issues}
+WebRTC uses the origin as a basic unit of permissions. Due to the security associated with the origin  depending on the ability to authenticate content from the origin, the origin can be securely established only if the data is transferred through HTTPS. Therefore, any client-side must treat HTTP and HTTPS differently in terms of domain permissions \cite{rescorla2013webrtc}.
+
+\subsubsection{IP Location Privacy}
+The default behaviour for ICE has a side effect which leaks large amounts of location information, which is that the peers learns the IP addresses. This ultimately has negative consequences with privacy in most circumstances. Should the user’s IP need to be hidden from the server, a sort of explicit privacy preserving mechanism needs to be implemented on the client, but is unavailable yet for WebRTC \cite{rescorla2013webrtc}.
+
 \subsection{Use-Cases For WebRTC}
 Teleconferencing is an area that encompasses quite a broad spectrum of users. It can range from users simply engaging in a multi-user chat for social reasoning, or can be used in a more professional sense, from the likes of companies engaging with their clients and fellow workers, or to doctors and medical professionals communicating with their clients or fellow specialists. Whatever the use case it is relied on quite heavily on a day to day basis \cite{14003034520191201}.
 
