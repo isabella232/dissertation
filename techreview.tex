@@ -36,6 +36,10 @@ WebRTC uses the origin as a basic unit of permissions. Due to the security assoc
 \subsubsection{IP Location Privacy}
 The default behaviour for ICE has a side effect which leaks large amounts of location information, which is that the peers learns the IP addresses. This ultimately has negative consequences with privacy in most circumstances. Should the user’s IP need to be hidden from the server, a sort of explicit privacy preserving mechanism needs to be implemented on the client, but is unavailable yet for WebRTC \cite{rescorla2013webrtc}.
 
+\subsubsection{Communications Security}
+In a case where the signaling server does not use HTTPS to secure communications, any on-path attacker can substitute its own identity for that of either endpoint by replacing he DTLS-SRTP fingerprints in the handshake.
+Even if the application uses HTTPS, a man-in-the-middle attack can be potentially mounted by the signalling server unless a mechanism for independently verifying keys can be implemented \cite{rescorla2013webrtc}.
+
 \subsection{Use-Cases For WebRTC}
 Teleconferencing is an area that encompasses quite a broad spectrum of users. It can range from users simply engaging in a multi-user chat for social reasoning, or can be used in a more professional sense, from the likes of companies engaging with their clients and fellow workers, or to doctors and medical professionals communicating with their clients or fellow specialists. Whatever the use case it is relied on quite heavily on a day to day basis \cite{14003034520191201}.
 
