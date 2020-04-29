@@ -68,3 +68,29 @@ On call close, the connection and channel of data will be closed and all streams
     \includegraphics[width=0.8\textwidth]{images/CommunicationProtocol.png}
 \end{figure}
 
+\section{MySQL}
+MySQL is an open-source relational database management system. It is a Relational Database Management system (RDBMS). These databases are ACID compliant. They boast recovery and backup, but require an expertise to use. SQL is almost ubiquitous, and is the de-facto standard for data processing. 
+
+\subsection{About Relational Databases}
+A relational database is a style of database which stores its data in tables in the format utilising rows and columns. This creates a kind of ease of access. The tables can then relate to one another through the use of keys. The main being a primary key, which is a unique value in the table, commonly denoted through an auto-increment value. Other keys can include a super key, a candidate key, an foreign key and composite/compound keys. 
+\\A relational DBMS is generally composed of layers. These layers consist of three tiers. The first being the Physical Layer (Internal), which deals with the bit-level transmission between the different devices, supporting either electrical or mechanical interfaces which are connected to the physical medium for synchronised communication [2]. This layer also handles the file organisation, the indexing, and the clustering. Only one instance of the physical level can exist at any time in an SQL database. On this level the database is organised into records, then into fields. It sits quite close to the systems hardware, copying to main memory when a user queries a record.
+\\A relational DBMS is generally composed of layers. These layers consist of three tiers. The first being the Physical Layer (Internal), which deals with the bit-level transmission between the different devices, supporting either electrical or mechanical interfaces which are connected to the physical medium for synchronised communication [2]. This layer also handles the file organisation, the indexing, and the clustering. Only one instance of the physical level can exist at any time in an SQL database. On this level the database is organised into records, then into fields. It sits quite close to the systems hardware, copying to main memory when a user queries a record.
+\\The third layer of a relational DBMS is the External Layer (View). This layer consists of the views of the database. It is the highest level in the database. This level incorporates a high level of abstraction, and maintains security of the database by giving users access to only the data they need at a given time.
+See Figure 3.4.
+
+\begin{figure}[h!]
+    \caption{Layers in a Relational Database.}
+    \label{image:rdbmsLayers}
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/RDBMS_Layers.png}
+\end{figure}
+
+\subsection{Why MySQL?}
+We chose SQL for this project because we felt it was the best fit. We had examined other options such as graph databases, and document stores. We examined all three and in our case only two of the three choices were a fit. The least likely to suit us was a document store, as it is architecture around storing, retrieving and managing document-oriented information. Since we have users interacting with other users across an array of channels, a relational or graph database was the better choice.  A graph database could have been used and there are many pro’s in our case for using it. For example the relationship of the users, channels, and messages could have been easily represented as a graph, but we felt a relational table would do the same job efficiently. Also, since SQL is the standard for data-processing we felt it was the better choice as it is known for its capabilities to handle large amounts of data at any time. This being said, a graph database would have no issues processing the information we are handling. Ultimately we went with an SQL database for some of its features such as locking, transactions and the fact that it is ACID compliant. ACID compliance is used with transactions and is broken down into several parts. The first being Atomicity, which means the transaction is atomic. It either is performed in its entirety, or it isn’t performed at all. The second letter in ACID stands for Consistency, which means that the transaction will transform the database from one consistent state to another. The I stands for Independence, which means that transactions can be executed independently of each other. This is really what we are looking for in a database, as there will be quite a lot of information being exchanged at the same time. This can ensure that the correct information is being sent and written securely. The final letter in ACID stands for Durability. This means that only successful transactions are stored permanently to the database. If a transaction is not stored correctly the transaction can be aborted and no formation is stored. This can be a safeguard for when a user experiences a connection loss or any similar situation.  See Figure 3.5.
+
+\begin{figure}[h!]
+    \caption{Life-cycle of a Transaction.}
+    \label{image:txLifeCycle}
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/TransactionLifeCycle_ACID.png}
+\end{figure}
