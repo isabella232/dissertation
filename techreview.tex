@@ -1,11 +1,10 @@
 \chapter{Technology Review}
 
 \section{WebRTC}
-\subsection{About WebRTC}
 Web Real-Time Communication (WebRTC), is an important tool in this regard, and offers real-time communication with web-browsers and mobile applications, and is built and managed in an open source fashion. WebRTC offers the likes of direct file sharing, and peer-to-peer media, without the need for an intermediary server or the use of third-party software \cite{johnston2012webrtc}. 
 \\The Application Programming Interface (API) developed for WebRTC has the capability to be used in conjunction for development of data, audio, and video channels. The API for WebRTC has three main elements: (i) Peer-Connection, (ii) Data-Channel, (iii) Media-Stream \cite{jesup2015webrtc}. Peer-Connection generates a direct form of communication between users/peers. Data-Channel is the transportation of data as a service between users via a bidirectional peer-to-peer connections. The Media-Stream has the capabilities  to create video and audio streams, and also manages the content of those streams \cite{14003034520191201}. 
 
-\subsection{WebRTC Security}
+\section{WebRTC Security}
 In comparison to some conventional real-time systems, such as SIP-based soft phones, the communications for WebRTC are controlled directly through the use of a Web-Server, which can be interacted through the use of a JavaScript API. See Figure 3.1.
 \\Complexity is increased when looking at the likes of inter-domain calling, alongside of which bring a number of security challenges \cite{rescorla2013webrtc}.
 
@@ -16,10 +15,10 @@ In comparison to some conventional real-time systems, such as SIP-based soft pho
     \includegraphics[width=0.5\textwidth]{images/simpleWebRTCSystem.png}
 \end{figure}
 
-\subsubsection{WebRTC Trust Model}
+\subsection{WebRTC Trust Model}
 The trust model in WebRTC fundamentally is the hierarchy of trust, which is rooted in the browser, serving as the user’s Trusted Computing Base (TCB). The browser will ultimately enforce any security property the user wishes. On the converse, no security guarantees are possible should the browser be compromised. In an optimal system, reliance on the trust in external entities apart from the browser would not be done, this however, is not possible for a functional WebRTC system. There exist two categories for other networks: The type in which the browser can authenticate, thus granting permissions to resources with otherwise sensitive access, and those which where authentication is infeasible and therefore are un-trusted  \cite{rescorla2013webrtc}.
 
-\subsubsection{Authenticated Entities}
+\subsection{Authenticated Entities}
 In the WebRTC system there exists two major categories of authenticated entries:
 \begin{itemize}
 	\item Calling Services: Sites with a verifiable origin
@@ -27,28 +26,28 @@ In the WebRTC system there exists two major categories of authenticated entries:
 \end{itemize}
 * Note that, however, authentication does not equate to trust. This is in the case of access to device hardware such as webcam or microphone. \cite{rescorla2013webrtc}
 
-\subsubsection{Unauthenticated Entities}
+\subsection{Unauthenticated Entities}
 In cases apart from the entities outlined above, network elements are generally not identifiable, and therefore are un-trust-able. This does not negate the possibility of interaction, instead it means an assumption must be made that interactions are in-feasible \cite{rescorla2013webrtc}.
 
-\subsubsection{Origin and Web Security Issues}
+\subsection{Origin and Web Security Issues}
 WebRTC uses the origin as a basic unit of permissions. Due to the security associated with the origin  depending on the ability to authenticate content from the origin, the origin can be securely established only if the data is transferred through HTTPS. Therefore, any client-side must treat HTTP and HTTPS differently in terms of domain permissions \cite{rescorla2013webrtc}.
 
-\subsubsection{IP Location Privacy}
+\subsection{IP Location Privacy}
 The default behaviour for ICE has a side effect which leaks large amounts of location information, which is that the peers learns the IP addresses. This ultimately has negative consequences with privacy in most circumstances. Should the user’s IP need to be hidden from the server, a sort of explicit privacy preserving mechanism needs to be implemented on the client, but is unavailable yet for WebRTC \cite{rescorla2013webrtc}.
 
-\subsubsection{Communications Security}
+\subsection{Communications Security}
 In a case where the signaling server does not use HTTPS to secure communications, any on-path attacker can substitute its own identity for that of either endpoint by replacing he DTLS-SRTP fingerprints in the handshake.
 Even if the application uses HTTPS, a man-in-the-middle attack can be potentially mounted by the signalling server unless a mechanism for independently verifying keys can be implemented \cite{rescorla2013webrtc}.
 
-\subsection{Use-Cases For WebRTC}
+\section{Use-Cases For WebRTC}
 Teleconferencing is an area that encompasses quite a broad spectrum of users. It can range from users simply engaging in a multi-user chat for social reasoning, or can be used in a more professional sense, from the likes of companies engaging with their clients and fellow workers, or to doctors and medical professionals communicating with their clients or fellow specialists. Whatever the use case it is relied on quite heavily on a day to day basis \cite{14003034520191201}.
 
-\subsubsection{Use-Cases For WebRTC: Medicine}
+\subsection{Use-Cases For WebRTC: Medicine}
 Teleconferencing, in the field of medicine, for example, allows to reduce the cost of nursing, to overcome shortages for the work force in health care, to maintain a better health care at home, to enhance the health of the public, to generate better education in terms of health, and to create better doctor-patient and inter-professional relationships \cite{14003034520191201}. 
 \\Referring back to the field of medicine, WebRTC has been used in the likes of online medical consultation, which aids in the treatment and rehabilitation of patients, and in other cases can be used for diagnosis by transmitting radiology images \cite{14003034520191201}. For the likes of the World Health Organisation, the use of telemedicine can be used to overcome and breakdown geographical barriers in order to increase access to health care services. The initial benefit being in the likes of rural or underdeveloped communities, communities in which would normally lack the access of health care. Through the use of WebRTC based applications, a form of ehealth could be used to transfer health resources and health care through electronic means. However, there are many issues when faced with the implementation of this. The likes of which being due to the inadequacy of the systems being used; the level of service quality to user satisfaction; or possibly even the return on investment in relation to the acquisition cost and system maintenance. \cite{S187705091632345620160101}
 
-\subsection{WebRTC Communication Protocols}
-Figure 3.1 displays the architecture, at a higher level, used in our application. With this, it is necessary that both parties send the necessary protocol information through a socket in order to create a connection. Interactive Connectivity Establishment (ICE) applicants are proposed and classified through this protocol in order to identify and locate peers. First we need to identify the peer address, this is done with a Session Traversal Utilites for Network Address Translator server. A direct media connection is established only if the STUN server is successful in the identification of addresses. Should that not be the case, a Traversal Using Relays around Network Address Translator server allows in the accessing the peers public address and also in media transferring between peers\cite{14003034520191201}.
+\section{WebRTC Communication Protocols}
+Figure 3.1 displays the architecture, at a higher level, used in our application. With this, it is necessary that both parties send the necessary protocol information through a socket in order to create a connection. Interactive Connectivity Establishment (ICE) applicants are proposed and classified through this protocol in order to identify and locate peers. First we need to identify the peer address, this is done with a Session Traversal Utilities for Network Address Translator server. A direct media connection is established only if the STUN server is successful in the identification of addresses. Should that not be the case, a Traversal Using Relays around Network Address Translator server allows in the accessing the peers public address and also in media transferring between peers\cite{14003034520191201}.
 
 \begin{figure}[h!]
     \caption{WebRTC Communications Architecture.}
