@@ -2,7 +2,30 @@
 
 \section{WebRTC}
 Web Real-Time Communication (WebRTC), is an important tool in this regard, and offers real-time communication with web-browsers and mobile applications, and is built and managed in an open source fashion. WebRTC offers the likes of direct file sharing, and peer-to-peer media, without the need for an intermediary server or the use of third-party software \cite{johnston2012webrtc}. 
-\\The Application Programming Interface (API) developed for WebRTC has the capability to be used in conjunction for development of data, audio, and video channels. The API for WebRTC has three main elements: (i) Peer-Connection, (ii) Data-Channel, (iii) Media-Stream \cite{jesup2015webrtc}. Peer-Connection generates a direct form of communication between users/peers. Data-Channel is the transportation of data as a service between users via a bidirectional peer-to-peer connections. The Media-Stream has the capabilities  to create video and audio streams, and also manages the content of those streams \cite{14003034520191201}. 
+\\The Application Programming Interface (API) developed for WebRTC has the capability to be used in conjunction for development of data, audio, and video channels. The API for WebRTC has three main elements: (i) Peer-Connection, (ii) Data-Channel, (iii) Media-Stream \cite{jesup2015webrtc}. Peer-Connection generates a direct form of communication between users/peers. Data-Channel is the transportation of data as a service between users via a bidirectional peer-to-peer connections. The Media-Stream has the capabilities  to create video and audio streams, and also manages the content of those streams \cite{14003034520191201}.
+
+\section{WebRTC Overview and Terminology}
+\subsection{Web Architecture}
+The client-server paradigm is generally regarded as the classic semantics for web architecture in which browsers send HTTP requests for content on a web server, with replies with a payload containing the response.
+\\The client-server paradigm is generally regarded as the classic semantics for web architecture in which browsers send HTTP requests for content on a web server, with replies with a payload containing the response.
+
+\subsection{WebRTC Architecture}
+The schematics for client-server WebRTC are extended between browsers with the introductions of peer-to-peer communication paradigm. The generally used architectural model draws its inspiration from the Session Initiation Protocol Trapezoid. However, the most common scenario for WebRTC is the architectural model depicted in figure ~\ref{image:simpleWebRTCSystem} \cite{loreto2014real}.
+
+\subsection{Signaling}
+Complete specific control of the media plane, while having as much of the signalling plane as possible left to the application layer, is the design idea for WebRTC. The reason being the a variety of applications may opt to use different signaling protocols.
+\\ The most important information that needs to be sent is the session description, which specifies the information on transport, as well as the type of media, the format, and the collection of associated media configuration parameters needed to establish paths for media \cite{loreto2014real}.
+
+\subsection{Media Stream}
+By definition, a media stream is an actual stream of data which can be audio and/or video, but is represented in an abstract fashion. The purpose of it is to handle actions which manage the media stream, the likes of which include displaying content on the stream, recording content on the stream, or sending content to a remote peer. A media stream can also be extended to represent a remote stream or a local stream. The difference being that one is sent from a local node (remote stream), while the other is sent to a remote node (local stream).
+\\ A local media stream is the representation of a media stream sent from a local capture device, i.e. microphone, webcam. Creation and use of a local stream is granted from the web applications request of access from the user through the function getUserMedia(). After which, the application will specify its media type (audio/video) access requirement. Access is either granted or denied based on the devices selector in the browsers interface. Access can be revoked once the application is finished by calling LocalMediaStream’s stop() function.
+\\  A break down of the media plane shows that signalling between peers is carried out of band. Secure Real-time Transport Protocol (SRTP) has the function of carrying the media data along with the RTP Control Protocol information which is used in monitoring statistics on transmission associated with streams of data \cite{loreto2014real}.
+
+\subsection{Peer Connection}
+Peer Connection allows direct browser to browser communication between peers/users. It is the representation of assoiation with remote peers, which in most cases in an instance of the same application running on the other end. Coordination of communications are through the use of a signaling channel, which is provided by scriping code via the web server. Once a peer connection is established, the remote browser can be sent media streams directly.
+\\ Together with the STUN and TURN servers, the ICE protocol let UDP-based media stream traverse NAT boxes and firewalls as a mechanism for Peer Connection. The ICE allows the browsers to discover information aboute the network topology of where they are deployed to find the best communications path. Upon arrival, the receiving peer connection is fed each signalling message \cite{loreto2014real}.
+
+\subsection{Data Channel}
 
 \section{WebRTC Security}
 In comparison to some conventional real-time systems, such as SIP-based soft phones, the communications for WebRTC are controlled directly through the use of a Web-Server, which can be interacted through the use of a JavaScript API. See Figure ~\ref{image:simpleWebRTCSystem}.
