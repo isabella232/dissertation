@@ -3,12 +3,23 @@
 For vertex we have chosen to work with a MySQL database. This was ultimately a big decision as we could have gone with any assortment of SQL style databases, a no-SQL database, or could have gone with a graph database, or possibly even a document store.
 
 \subsection{Schemas}
+Due to the nature of our application we only needed a handful of schemas to handle the information saved throughout the application. The information being held is relatively straightforward. For each of the tables they need a unique identifier. In the case of schemas: User; Channel; Message; and Session; this was handled with the use of an auto-incrementing integer value, which increments by 1 per entry and starts at various values in respect to each table i.e. User will auto-increment from 100, Channel will auto-increment from 200 and so on. These auto-incrementing values are used in the form of the primary key for those tables with an alias of ‘id’ for each table allow for an ease of lookup, along with an O(1) time-complexity for look-up.
+\\ The other remaining table, Member, uses foreign key values in a unique combination to handle look up, instead of a primary key value. For the most part, since there are few components of entry in each schema, the varaibles are given a ‘NOT NULL’ modifier, which means that data has to be given to them in order to avoid errors being raised.
+
 \subsubsection{User Schema}
-Something about user schema...
+This schema handles the user information and was the first schema we had to think about. The User table is broken down into 3 components: ‘id’, ‘name’, ‘password’.
+\\The ‘id’ of this table is described above, as an unsigned auto-incrementing integer starting at 100.
+\\The ‘name’ is stored as a varchar of size 32 with a not-null modifier. This allows for an adequate size of allocated storage for the user name. The purpose of limiting the character is for memory preservation. The ‘name’ acts as a unique key to this schema. This is to avoid any duplication errors for any new users being inputted into the table, and also serves as a reference point should the ‘name’ need to be queried without explicitly knowing the ‘id’ beforehand. 
+\\The ‘password’ is stored after it is hashed and salted using the bcrypt hashing function, which utilises the blowfish cipher. It is stored as a varchar of size 255 with a not null modifier.
 See Figure ~\ref{image:userSchema}
 
 \subsubsection{Channel Schema}
-Something about channel schema...
+This schema handles the channels being used in the application, and is broken down into 4 components.
+\\The ‘id’ of this table is described above, as an unsigned auto-incrementing integer starting at 200.
+The channel has to store a ‘name’ which forms part of a unique key used for referencing and duplication avoidance. This value is stored as a varchar of size 32 with a not null modifier.
+\\It has a 'creator\_id', which acts as a foreign key from the User table (id).
+\\It has a enumerated value, ‘type’, which allows us to differentiate between voice and text channels. This allows the user to create channels with a bit of variance to them.
+\\Its unique key consists of ‘name’, ‘creator\_id’, and ‘type’ which serves as a way to avoid duplication's in the database.
 See Figure ~\ref{image:channelSchema}
 
 \subsubsection{Message Schema}
