@@ -1,10 +1,13 @@
 \chapter{System Design}
 \section{Database}
 For vertex we have chosen to work with a MySQL database. This was ultimately a big decision as we could have gone with any assortment of SQL style databases, a no-SQL database, or could have gone with a graph database, or possibly even a document store.
+\\ Our database uses an INNODB engine, which allows for full transaction support, various levels of locking, such as row-locking, and has full ACID compliance. The alternative we could have used is a MYISAM engine, which supports different functionality which would not have suited our application.
 
 \subsection{Schemas}
 Due to the nature of our application we only needed a handful of schemas to handle the information saved throughout the application. The information being held is relatively straightforward. For each of the tables they need a unique identifier. In the case of schemas: User; Channel; Message; and Session; this was handled with the use of an auto-incrementing integer value, which increments by 1 per entry and starts at various values in respect to each table i.e. User will auto-increment from 100, Channel will auto-increment from 200 and so on. These auto-incrementing values are used in the form of the primary key for those tables with an alias of ‘id’ for each table allow for an ease of lookup, along with an O(1) time-complexity for look-up.
 \\ The other remaining table, Member, uses foreign key values in a unique combination to handle look up, instead of a primary key value. For the most part, since there are few components of entry in each schema, the varaibles are given a ‘NOT NULL’ modifier, which means that data has to be given to them in order to avoid errors being raised.
+\\ The database uses UTF-8 default as it’s character set, and utf8\_general\_ci as it’s collate set.
+\\ The following schemas use cascading update, and cascading delete: Channel; Message; Session; Member. This allows for safe removal or modification of data, without setting null values.
 
 \subsubsection{User Schema}
 This schema handles the user information and was the first schema we had to think about. The User table is broken down into 3 components: ‘id’, ‘name’, ‘password’.
@@ -23,16 +26,30 @@ The channel has to store a ‘name’ which forms part of a unique key used for 
 See Figure ~\ref{image:channelSchema}
 
 \subsubsection{Message Schema}
-Something about message schema...
+This schema handles the messages being sent in the application. It is broken down into 5 components.
+\\The first being the ‘id’. This is an unsigned auto-incrementing integer starting at 300.
+\\The second being ‘channel’, which is a foreign key relating to the Channel table (see Channel for details). This serves as a way to link the message to the channel, without the messages spilling out into incorrect channels.
+\\The third component is the ‘author’, which is a foreign key relating to the User table (see User for details). It serves as a way to link the message to the relevant user, without incorrect users seeing the data.
+The fourth component is ‘content’. This is a varchar of size 255 with a not null modifier. This variable stores the message content that the user is sending.
+\\The final component of this schema is the ‘timestamp’ for the message. This is stored as an Int of size 8 with a not null modifier.  The timestamp is stored as Unix Epoch time and the purpose of the size being set to 8 for this is to allocate enough space to handle epoch time correctly.
 See Figure ~\ref{image:messageSchema}
 
 \subsubsection{Session Schema}
-Something about session schema...
+This schema handles the current session that is active for the user. It is a fairly straight-forward schema which consists of 3 components.
+\\ The first component is the ‘id’. This is a varchar of size 255 with a not null modifier. The reason being is that the id should be stored as a UUID, therefore requiring an adequate amount of space allocation for the variable. This is the primary key for this table.
+\\ The second component is ‘user’. This is a foreign key which links this table to the User table (see User for details).
+The final component is ‘expire\_after’. This is another instance of Unix Epoch time, with a similar allocation of memory for this variable as was seen in the Message table. 
 See Figure ~\ref{image:sessionSchema}
 
 \subsubsection{Member Schema}
-Something about member schema...
+The final table in this database is the Member table. This is responsible for grouping users with relevant channels, which allows for easier look-ups. It consists of 2 components, both of which are foreign keys.
+\\ The first component is ‘channel’. This is set as an Integer of size 4, and is a  foreign key which relates to the Channel table on ‘id’.
+\\ The second, and final component, is the ‘user’. This is also set as an Integer of size 4, and is a foreign key which relates to the User table on ‘id’.
+\\ This table contains a unique key, which is comprised of  ‘channel’ and ‘user’. The reason being is to avoid duplicate entries in this schema, and also helps with look ups on the table.
 See Figure ~\ref{image:memberSchema}
+
+\subsection{Testing}
+In terms of testing, a full CRUD test is included in ‘vertex\_db\_v2.sql’, which is located on the database portion of the project repository. These tests verify correct functionality of creation of values, reading values, updating values, and deletion of values. They also verify and test for referential integrity for the database, along with duplication avoidance.
 
 \begin{figure}[h!]
     \caption{User Schema}
