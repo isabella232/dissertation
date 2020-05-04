@@ -22,10 +22,14 @@ By definition, a media stream is an actual stream of data which can be audio and
 \\  A break down of the media plane shows that signalling between peers is carried out of band. Secure Real-time Transport Protocol (SRTP) has the function of carrying the media data along with the RTP Control Protocol information which is used in monitoring statistics on transmission associated with streams of data \cite{loreto2014real}.
 
 \subsection{Peer Connection}
-Peer Connection allows direct browser to browser communication between peers/users. It is the representation of assoiation with remote peers, which in most cases in an instance of the same application running on the other end. Coordination of communications are through the use of a signaling channel, which is provided by scriping code via the web server. Once a peer connection is established, the remote browser can be sent media streams directly.
-\\ Together with the STUN and TURN servers, the ICE protocol let UDP-based media stream traverse NAT boxes and firewalls as a mechanism for Peer Connection. The ICE allows the browsers to discover information aboute the network topology of where they are deployed to find the best communications path. Upon arrival, the receiving peer connection is fed each signalling message \cite{loreto2014real}.
+Peer Connection allows direct browser to browser communication between peers/users. It is the representation of association with remote peers, which in most cases in an instance of the same application running on the other end. Coordination of communications are through the use of a signaling channel, which is provided by scripting code via the web server. Once a peer connection is established, the remote browser can be sent media streams directly.
+\\ Together with the STUN and TURN servers, the ICE protocol let UDP-based media stream traverse NAT boxes and firewalls as a mechanism for Peer Connection. The ICE allows the browsers to discover information about the network topology of where they are deployed to find the best communications path. Upon arrival, the receiving peer connection is fed each signalling message \cite{loreto2014real}.
 
 \subsection{Data Channel}
+The Data Channel API provides a transport service for web browsers to allow the exchange of generic data in a bi-direction fashion between peers.
+\\ The encapsulation of SCTP over DTLS over UDP along with ICE it provides a system which is NAT traverse-able, and also provides integrity protected transfers and source authentication. This also has the benefit of allowing the parallel media transfers to inter-work smoothly with the data transport.
+\\ Each stream is a representation of a logical channel which is unidirectional, and provides an in-sequence delivery. This message sequence can be ordered or un-ordered when sent. The order of the messages is only saved for the ordering of all messages in the same stream.
+\\ Setup of the DataChannel is initiated when the function CreateDataChannel() on an instantiated PeerConnection object is called for the first time. Subsequent calls to this function creates new DataChannels within the existing SCTP association \cite{loreto2014real}.
 
 \section{WebRTC Security}
 In comparison to some conventional real-time systems, such as SIP-based soft phones, the communications for WebRTC are controlled directly through the use of a Web-Server, which can be interacted through the use of a JavaScript API. See Figure ~\ref{image:simpleWebRTCSystem}.
@@ -76,7 +80,14 @@ Figure ~\ref{image:webRTCCommsArch}. displays the architecture, at a higher leve
     \caption{WebRTC Communications Architecture.}
     \label{image:webRTCCommsArch}
     \centering
-    \includegraphics[width=0.5\textwidth]{images/WebRTCCommsArchitecture.png}
+    \includegraphics[width=0.9\textwidth]{images/WebRTCCommsArchitecture.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Communication Protocol between Peers.}
+    \label{image:commsProtocol}
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/CommunicationProtocol.png}
 \end{figure}
 
 Figure ~\ref{image:commsProtocol} displays the protocol used in communication to establish a call procedure composed of initiation, handshake, ICE negotiation, and hang-up stages which is used between peers.
@@ -84,12 +95,6 @@ In the first stage, initiation, peers are assigned to different rooms by the soc
 \\The use of the WebRTC library is to send and receive media to or from peers. To begin, the peer initiates their media streams, this can either be audio, video, or both. On completion of this, and on ready of the streams, a peer connection is created by the callee, which is added to its local stream, subsequently creating an offer, and then finally sending this offer to the caller. The same procedure will be followed in the case of the text chat communication by taking the ready state of the peers media stream, without the media starting, and the application should start the data channel of text message transfer. On retrieval of this offer, the caller will create a peer connection. They will set a remote description, add the local stream of the offer, generate and answer and finally will send the answer to the callee. A remote description is set once the answer is received by the callee. ICE candidates are initiated only while a peer connection is set. If a local ICE candidate is generated, the protocol will verify the offer of creation, and will add the ICE candidates remote user. Should one of these checked items be available, the candidates local ICE is sent to the remote user, and subsequently will be added by the remote user as a remote ICE candidate.
 \\On ready of local and remote streams, connection states of ICE are controlled. Should the state of ICE be in connected or completed, the call will be generated  and communication screens for audio and video will be presented to the users. If the ICE connection is in a checking or new state, the ICE protocol will wait and check the status periodically. Should this fail i.e the connection is in a different state, then the connection will be closed.
 On call close, the connection and channel of data will be closed and all streams will be interrupted. This should terminate the callee’s room, and set the peers in a new state of ready to receive/create a new call \cite{14003034520191201}.
-\begin{figure}[h!]
-    \caption{Communication Protocol between Peers.}
-    \label{image:commsProtocol}
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/CommunicationProtocol.png}
-\end{figure}
 
 \section{MySQL}
 MySQL is an open-source relational database management system. It is a Relational Database Management system (RDBMS). These databases are ACID compliant. They boast recovery and backup, but require an expertise to use. SQL is almost ubiquitous, and is the de-facto standard for data processing. 
