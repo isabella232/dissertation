@@ -1,4 +1,72 @@
 \chapter{System Design}
+\Section{Front-End Design}
+Stuff about front-end...
+
+Login Page See Figure ~\ref{image:loginPage}
+\begin{figure}[h!]
+    \caption{Login Page}
+    \label{image:loginPage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/loginPage.png}
+\end{figure}
+
+Register Page See Figure ~\ref{image:registerPage}
+\begin{figure}[h!]
+    \caption{Register Page}
+    \label{image:registerPage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/registerPage.png}
+\end{figure}
+
+Home Page See Figure ~\ref{image:homePage}
+\begin{figure}[h!]
+    \caption{Home Page}
+    \label{image:homePage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/homeScreen.png}
+\end{figure}
+
+Peer Connection Lobby See Figure ~\ref{image:peerConnectionLobby}
+\begin{figure}[h!]
+    \caption{Peer Connection Lobby}
+    \label{image:peerConnectionLobby}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/callLobby.png}
+\end{figure}
+
+Successful WebRTC Functionality See Figure ~\ref{image:webRTCProof}
+\begin{figure}[h!]
+    \caption{Successful WebRTC Functionality}
+    \label{image:webRTCProof}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/webRTCProof.png}
+\end{figure}
+
+Channel Creation See Figure ~\ref{image:channelCreation}
+\begin{figure}[h!]
+    \caption{Channel Creation}
+    \label{image:channelCreation}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/channelCreation.png}
+\end{figure}
+
+Channel Deletion See Figure ~\ref{image:channelDeletion}
+\begin{figure}[h!]
+    \caption{Channel Deletion}
+    \label{image:channelDeletion}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/channelDeletion.png}
+\end{figure}
+
+Settings Page See Figure ~\ref{image:settingsPage}
+\begin{figure}[h!]
+    \caption{Settings Page}
+    \label{image:settingsPage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/settingsPage.png}
+\end{figure}
+
+
 \section{Database}
 For vertex we have chosen to work with a MySQL database. This was ultimately a big decision as we could have gone with any assortment of SQL style databases, a no-SQL database, or could have gone with a graph database, or possibly even a document store.
 \\ Our database uses an INNODB engine, which allows for full transaction support, various levels of locking, such as row-locking, and has full ACID compliance. The alternative we could have used is a MYISAM engine, which supports different functionality which would not have suited our application.
