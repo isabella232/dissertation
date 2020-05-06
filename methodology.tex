@@ -6,7 +6,18 @@ In terms of project scope we needed to aim for something ideally with quite a fe
 \\ First steps involved building a feature list from various other sites and applications, i.e. draw inspiration from the design of Discords server/chat rooms, and verifying WebRTC compatibility with Flutter. It also involved arranging weekly meetings, both with our supervisor, but also amongst ourselves with the intent to set our weekly goals and to re-convene to check-in on our progress of the project. 
 \\ Our initial scope consisted of building a conference application through Flutter. It would use WebRTC as it’s main communication technology rather than Voice Over IP (VOIP). It would have multimedia storage, such as images/videos, but would primarily focus on voice/video calling and multi-peer text messaging. It would also support Oauth as a form of authentication/login. 
 
-\section{Development Methods}
+\section{Development Method}
+In terms of our development method, we feel the approach we took was quite similar to that of Agile, but had elements of waterfall and spiral. The following section outlines what each of those processes are, why we approached the project in this fashion, and how we implemented such processes.
+\subsection{Waterfall}
+Waterfall is a software development process which boasts sequential rigidity, big design up front (BDUF), big testing at the end, and a “document everything” approach \cite{palmquist2013parallel}. Waterfall is an iterative approach, which often can be risky, and can potentially invite failure. A recommended approach when working with Waterfall is to run the model at least twice. The reason being is the first run is to be a prototyping run, to better understand what is being asked for. This ensures that what is being developed is what is actually needed \cite{palmquist2013parallel}. See Figure ~\ref{image:waterfallModel}. For our use case and design strategy this was not optional, and would have been quite time costly.
+\\ The issues from Waterfall design, and some of the main reasons for us not using this approach, are that systems are designed sequentially; although we used a somewhat iterative approach, there are many stages in the project where we were jumping from process to process, against the grain of the waterfall approach. Stages are often completed once, and proceeded by the next in Waterfall; often times in our project, since we were using a new technology none of us had any prior experience with, we had to re-do areas of work. All requirements are determined up front, are to be known upfront, and will remain unchanged; This would have been in-feasible as our scope for the project was quite large at the initial stage of development and planning, and as time went on, narrowed significantly. 
+
+\begin{figure}[h!]
+    \caption{Waterfall Development Process Model}
+    \label{image:waterfallModel}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/WaterfallModel.png}
+\end{figure}
 
 \section{Project \& Time Management}
 At an early stage in the project we opted to use an issue tracking software to manage the workload, allocation of tasks, and to monitor our current stage of development.
