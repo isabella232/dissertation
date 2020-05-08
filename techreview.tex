@@ -1,13 +1,14 @@
 \chapter{Technology Review}
 
 \section{WebRTC}
-Web Real-Time Communication (WebRTC), is an important tool in this regard, and offers real-time communication with web-browsers and mobile applications, and is built and managed in an open source fashion. WebRTC offers the likes of direct file sharing, and peer-to-peer media, without the need for an intermediary server or the use of third-party software \cite{johnston2012webrtc}. 
+Web Real-Time Communication (WebRTC), is an important tool in relation to this project, and offers real-time communication with web-browsers and mobile applications, and is built and managed in an open source fashion. WebRTC offers the likes of direct file sharing, and peer-to-peer media, without the need for an intermediary server or the use of third-party software \cite{johnston2012webrtc}. 
 \\The Application Programming Interface (API) developed for WebRTC has the capability to be used in conjunction for development of data, audio, and video channels. The API for WebRTC has three main elements: (i) Peer-Connection, (ii) Data-Channel, (iii) Media-Stream \cite{jesup2015webrtc}. Peer-Connection generates a direct form of communication between users/peers. Data-Channel is the transportation of data as a service between users via a bidirectional peer-to-peer connections. The Media-Stream has the capabilities  to create video and audio streams, and also manages the content of those streams \cite{14003034520191201}.
 
 \section{WebRTC Overview and Terminology}
 \subsection{Web Architecture}
 The client-server paradigm is generally regarded as the classic semantics for web architecture in which browsers send HTTP requests for content on a web server, with replies with a payload containing the response.
-\\The client-server paradigm is generally regarded as the classic semantics for web architecture in which browsers send HTTP requests for content on a web server, with replies with a payload containing the response.
+\\The server provides resources which are associated closely with an entity known as a Uniform Resource Identifier (URI), or Uniform Resource Locator (URL).
+\\ In the scenario of a web application, JavaScript code can be embedded in HTML to send back to the client, which is interacted with by browsers through a standard JavaScript APIs and through the user interface by end-users \cite{loreto2014real}.
 
 \subsection{WebRTC Architecture}
 The schematics for client-server WebRTC are extended between browsers with the introductions of peer-to-peer communication paradigm. The generally used architectural model draws its inspiration from the Session Initiation Protocol Trapezoid. However, the most common scenario for WebRTC is the architectural model depicted in figure ~\ref{image:simpleWebRTCSystem} \cite{loreto2014real}.
@@ -145,5 +146,5 @@ With Firebase, code changes for the database are done on client-side, where-as S
 See section \ref{rdbms} for in-depth explanation.
 \subsubsection{Non-Realtime Database}
 Depending on the configuration of the database, data may not be reachable in real time. This has a few factors hinging on it such as transactions and locking, where-as Firebase has constant synchronisation.
-\subsection{Query Friendly}
+\subsubsection{Query Friendly}
 SQL based databases have the ability to handle complex queries, which allows for greater flexibility  in terms of data upload and retrieval. Whereas NoSQL databases are designed to handle a lower level of queries which are meant to be quite simpler. 
