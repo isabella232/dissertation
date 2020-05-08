@@ -1,5 +1,58 @@
 \chapter{Technology Review}
+% -- C
+\section{Flutter}
+Flutter was used to develop the user interface for this application. When building the architecture for a mobile application, four main pillars need to be accounted for. These are:
+\begin{enumerate}
+	\item State Management
+	\item Navigation
+	\item Inversion Of Control
+	\item Data Models
+\end{enumerate}
 
+\subsection{State Management}
+The goal of state management is to keep the business logic separate from the User Interface (UI), database, network and third-party packages. This is done as the core business logic doesn't change frequently, while the others do.
+\\ The UI of an application should not communicate directly with the web. Application Program Interface (API) calls shouldn't be just implemented anywhere. Everything should go through the business logic from a single location.
+\\ This is important as it allows a plug-in architecture where you can swap one database framework for another and the rest of the application doesn't even know there was a change. This implementation is useful and important as it makes as it creates a scalable, maintainable and testable app.
+
+\subsection{State Management and Provider}
+The architecture for Vertex follows this principle. The business logic in the middle handling the processing of data. The API and the UI with Provider are all completely separate from the business logic and from one another.
+\\ The UI, Flutter and Provider are all contained in one part of the app. Flutter itself is a UI framework and Provider is a widget for that framework. Provider is not to be confused with the architecture and is not the state management for the application.
+\\ The state is the current values of the apps variables. These are part of the business logic, which is grouped and managed by the model object. From that we can gather that the business logic manages the state, not Provider.
+
+\subsubsection{So, what is Provider?}
+Provider is a state management helper. It is a widget that makes some value - such as a state model object, accessible to the widgets below it.
+\\ A Consumer widget, which is part of the provider package[ADD ME: 1], listens for changes in the values and then rebuilds the widgets below itself when changes occur.
+See Figure~\ref{image:providerTree}.
+
+\begin{figure}[h!]
+    \caption{Tree View of Provider and Consumer Widgets}
+    \label{image:providerTree}
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/consumer_tree_with_value.png}
+\end{figure}
+
+\section{Business Logic Communications}
+Communication between the UI and business logic is very similar to Model View ViewModel (MVVM) architecture used in most modern day web applications[ADD ME: 2].
+\\ The model is the data from a source like a database or WebSocket.
+\\ The view is the UI, a Page or widget.
+\\ The view model is the business logic which sits in the middle between the UI and the data. Its job is to provide data in a form that the UI can interpret and present, but it knows nothing about the UI itself. This is different from the MVP architecture[ADD ME: 3].
+See Figure~\ref{image:mvvmDiagram} and Figure ~\ref{image:vertexArch}.
+
+\begin{figure}[h!]
+    \caption{Model View ViewModel Diagram}
+    \label{image:mvvmDiagram}
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/mvvm_diagram.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Vertex Architecture}
+    \label{image:vertexArch}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/vertex_arch.png}
+\end{figure}
+
+% -- M
 \section{WebRTC}
 Web Real-Time Communication (WebRTC), is an important tool in relation to this project, and offers real-time communication with web-browsers and mobile applications, and is built and managed in an open source fashion. WebRTC offers the likes of direct file sharing, and peer-to-peer media, without the need for an intermediary server or the use of third-party software \cite{johnston2012webrtc}. 
 \\The Application Programming Interface (API) developed for WebRTC has the capability to be used in conjunction for development of data, audio, and video channels. The API for WebRTC has three main elements: (i) Peer-Connection, (ii) Data-Channel, (iii) Media-Stream \cite{jesup2015webrtc}. Peer-Connection generates a direct form of communication between users/peers. Data-Channel is the transportation of data as a service between users via a bidirectional peer-to-peer connections. The Media-Stream has the capabilities  to create video and audio streams, and also manages the content of those streams \cite{14003034520191201}.
@@ -11,7 +64,7 @@ The client-server paradigm is generally regarded as the classic semantics for we
 \\ In the scenario of a web application, JavaScript code can be embedded in HTML to send back to the client, which is interacted with by browsers through a standard JavaScript APIs and through the user interface by end-users \cite{loreto2014real}.
 
 \subsection{WebRTC Architecture}
-The schematics for client-server WebRTC are extended between browsers with the introductions of peer-to-peer communication paradigm. The generally used architectural model draws its inspiration from the Session Initiation Protocol Trapezoid. However, the most common scenario for WebRTC is the architectural model depicted in figure ~\ref{image:simpleWebRTCSystem} \cite{loreto2014real}.
+The schematics for client-server WebRTC are extended between browsers with the introductions of peer-to-peer communication paradigm. The generally used architectural model draws its inspiration from the Session Initiation Protocol Trapezoid. However, the most common scenario for WebRTC is the architectural model depicted in figure~\ref{image:simpleWebRTCSystem} \cite{loreto2014real}.
 
 \subsection{Signaling}
 Complete specific control of the media plane, while having as much of the signalling plane as possible left to the application layer, is the design idea for WebRTC. The reason being the a variety of applications may opt to use different signaling protocols.
@@ -33,7 +86,7 @@ The Data Channel API provides a transport service for web browsers to allow the 
 \\ Setup of the DataChannel is initiated when the function CreateDataChannel() on an instantiated PeerConnection object is called for the first time. Subsequent calls to this function creates new DataChannels within the existing SCTP association \cite{loreto2014real}.
 
 \section{WebRTC Security}
-In comparison to some conventional real-time systems, such as SIP-based soft phones, the communications for WebRTC are controlled directly through the use of a Web-Server, which can be interacted through the use of a JavaScript API. See Figure ~\ref{image:simpleWebRTCSystem}.
+In comparison to some conventional real-time systems, such as SIP-based soft phones, the communications for WebRTC are controlled directly through the use of a Web-Server, which can be interacted through the use of a JavaScript API. See Figure~\ref{image:simpleWebRTCSystem}.
 \\Complexity is increased when looking at the likes of inter-domain calling, alongside of which bring a number of security challenges \cite{rescorla2013webrtc}.
 
 \begin{figure}[h!]
@@ -75,7 +128,7 @@ Teleconferencing, in the field of medicine, for example, allows to reduce the co
 \\Referring back to the field of medicine, WebRTC has been used in the likes of online medical consultation, which aids in the treatment and rehabilitation of patients, and in other cases can be used for diagnosis by transmitting radiology images \cite{14003034520191201}. For the likes of the World Health Organisation, the use of telemedicine can be used to overcome and breakdown geographical barriers in order to increase access to health care services. The initial benefit being in the likes of rural or underdeveloped communities, communities in which would normally lack the access of health care. Through the use of WebRTC based applications, a form of ehealth could be used to transfer health resources and health care through electronic means. However, there are many issues when faced with the implementation of this. The likes of which being due to the inadequacy of the systems being used; the level of service quality to user satisfaction; or possibly even the return on investment in relation to the acquisition cost and system maintenance. \cite{S187705091632345620160101}
 
 \section{WebRTC Communication Protocols}
-Figure ~\ref{image:webRTCCommsArch}. displays the architecture, at a higher level, used in our application. With this, it is necessary that both parties send the necessary protocol information through a socket in order to create a connection. Interactive Connectivity Establishment (ICE) applicants are proposed and classified through this protocol in order to identify and locate peers. First we need to identify the peer address, this is done with a Session Traversal Utilities for Network Address Translator server. A direct media connection is established only if the STUN server is successful in the identification of addresses. Should that not be the case, a Traversal Using Relays around Network Address Translator server allows in the accessing the peers public address and also in media transferring between peers\cite{14003034520191201}.
+Figure~\ref{image:webRTCCommsArch}. displays the architecture, at a higher level, used in our application. With this, it is necessary that both parties send the necessary protocol information through a socket in order to create a connection. Interactive Connectivity Establishment (ICE) applicants are proposed and classified through this protocol in order to identify and locate peers. First we need to identify the peer address, this is done with a Session Traversal Utilities for Network Address Translator server. A direct media connection is established only if the STUN server is successful in the identification of addresses. Should that not be the case, a Traversal Using Relays around Network Address Translator server allows in the accessing the peers public address and also in media transferring between peers\cite{14003034520191201}.
 
 \begin{figure}[h!]
     \caption{WebRTC Communications Architecture.}
@@ -91,7 +144,7 @@ Figure ~\ref{image:webRTCCommsArch}. displays the architecture, at a higher leve
     \includegraphics[width=0.8\textwidth]{images/CommunicationProtocol.png}
 \end{figure}
 
-Figure ~\ref{image:commsProtocol} displays the protocol used in communication to establish a call procedure composed of initiation, handshake, ICE negotiation, and hang-up stages which is used between peers.
+Figure~\ref{image:commsProtocol} displays the protocol used in communication to establish a call procedure composed of initiation, handshake, ICE negotiation, and hang-up stages which is used between peers.
 In the first stage, initiation, peers are assigned to different rooms by the socket server when they first log in to the application. The purpose of these rooms are to send the status of communication for the users. This is useful because it sets the users up for the Idle step, in which they can receive or initiate calls. The processes of calling starts by registering with the room of the second/third/n peer to which that peer receiving a call. Should it be a case where the callee’s room is either empty or full, the process of calling is terminated. Should this not be the case, the incoming call is received. Only after the call is received is the WebRTC communication procedure started. 
 \\The use of the WebRTC library is to send and receive media to or from peers. To begin, the peer initiates their media streams, this can either be audio, video, or both. On completion of this, and on ready of the streams, a peer connection is created by the callee, which is added to its local stream, subsequently creating an offer, and then finally sending this offer to the caller. The same procedure will be followed in the case of the text chat communication by taking the ready state of the peers media stream, without the media starting, and the application should start the data channel of text message transfer. On retrieval of this offer, the caller will create a peer connection. They will set a remote description, add the local stream of the offer, generate and answer and finally will send the answer to the callee. A remote description is set once the answer is received by the callee. ICE candidates are initiated only while a peer connection is set. If a local ICE candidate is generated, the protocol will verify the offer of creation, and will add the ICE candidates remote user. Should one of these checked items be available, the candidates local ICE is sent to the remote user, and subsequently will be added by the remote user as a remote ICE candidate.
 \\On ready of local and remote streams, connection states of ICE are controlled. Should the state of ICE be in connected or completed, the call will be generated  and communication screens for audio and video will be presented to the users. If the ICE connection is in a checking or new state, the ICE protocol will wait and check the status periodically. Should this fail i.e the connection is in a different state, then the connection will be closed.
@@ -106,7 +159,7 @@ A relational database is a style of database which stores its data in tables in 
 \\A relational DBMS is generally composed of layers. These layers consist of three tiers. The first being the Physical Layer (Internal), which deals with the bit-level transmission between the different devices, supporting either electrical or mechanical interfaces which are connected to the physical medium for synchronised communication. This layer also handles the file organisation, the indexing, and the clustering. Only one instance of the physical level can exist at any time in an SQL database. On this level the database is organised into records, then into fields. It sits quite close to the systems hardware, copying to main memory when a user queries a record.
 \\A relational DBMS is generally composed of layers. These layers consist of three tiers. The first being the Physical Layer (Internal), which deals with the bit-level transmission between the different devices, supporting either electrical or mechanical interfaces which are connected to the physical medium for synchronised communication. This layer also handles the file organisation, the indexing, and the clustering. Only one instance of the physical level can exist at any time in an SQL database. On this level the database is organised into records, then into fields. It sits quite close to the systems hardware, copying to main memory when a user queries a record.
 \\The third layer of a relational DBMS is the External Layer (View). This layer consists of the views of the database. It is the highest level in the database. This level incorporates a high level of abstraction, and maintains security of the database by giving users access to only the data they need at a given time.
-See Figure ~\ref{image:rdbmsLayers}.
+See Figure~\ref{image:rdbmsLayers}.
 
 \begin{figure}[h!]
     \caption{Layers in a Relational Database.}
@@ -117,7 +170,7 @@ See Figure ~\ref{image:rdbmsLayers}.
 
 \subsection{Why MySQL?}
 SQL was chosen for this project because it was felt to be the best fit. Examinations other options such as graph databases, and document stores, took place to confirm this. Examinations of all three and, in the case of this application, only two of the three choices were a fit. The least likely to suit the application was a document store, as it is architecture around storing, retrieving and managing document-oriented information. Since users would be interacting with other users across an array of channels, a relational or graph database was the better choice.  A graph database could have been used and there are many pro’s in the case of our application for using it. For example the relationship of the users, channels, and messages could have been easily represented as a graph, but it was felt that a relational table would do the same job efficiently. Also, since SQL is the standard for data-processing we felt it was the better choice as it is known for its capabilities to handle large amounts of data at any time. This being said, a graph database would have no issues processing the information the application is handling. Ultimately an SQL database was chosen for some of its features such as locking, transactions and the fact that it is ACID compliant.
-\\ ACID compliance is used with transactions and is broken down into several parts. The first being Atomicity, which means the transaction is atomic. It either is performed in its entirety, or it isn’t performed at all. The second letter in ACID stands for Consistency, which means that the transaction will transform the database from one consistent state to another. The I stands for Independence, which means that transactions can be executed independently of each other. This is really what was being looked for in terms of a database for this application, as there can be quite a lot of information being exchanged at the same time. This ensures that the correct information is being sent and written securely. The final letter in ACID stands for Durability. This means that only successful transactions are stored permanently to the database. If a transaction is not stored correctly the transaction can be aborted and no formation is stored. This can be a safeguard for when a user experiences a connection loss or any similar situation. See Figure ~\ref{image:txLifeCycle}.
+\\ ACID compliance is used with transactions and is broken down into several parts. The first being Atomicity, which means the transaction is atomic. It either is performed in its entirety, or it isn’t performed at all. The second letter in ACID stands for Consistency, which means that the transaction will transform the database from one consistent state to another. The I stands for Independence, which means that transactions can be executed independently of each other. This is really what was being looked for in terms of a database for this application, as there can be quite a lot of information being exchanged at the same time. This ensures that the correct information is being sent and written securely. The final letter in ACID stands for Durability. This means that only successful transactions are stored permanently to the database. If a transaction is not stored correctly the transaction can be aborted and no formation is stored. This can be a safeguard for when a user experiences a connection loss or any similar situation. See Figure~\ref{image:txLifeCycle}.
 
 \begin{figure}[h!]
     \caption{Life-cycle of a Transaction.}
