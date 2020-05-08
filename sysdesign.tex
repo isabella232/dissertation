@@ -1,5 +1,5 @@
 \chapter{System Design}
-\Section{Front-End Design}
+\section{Front-End Design}
 Stuff about front-end...
 
 Login Page See Figure ~\ref{image:loginPage}
@@ -68,17 +68,18 @@ Settings Page See Figure ~\ref{image:settingsPage}
 
 
 \section{Database}
-For vertex we have chosen to work with a MySQL database. This was ultimately a big decision as we could have gone with any assortment of SQL style databases, a no-SQL database, or could have gone with a graph database, or possibly even a document store.
-\\ Our database uses an INNODB engine, which allows for full transaction support, various levels of locking, such as row-locking, and has full ACID compliance. The alternative we could have used is a MYISAM engine, which supports different functionality which would not have suited our application.
+For vertex a MySQL was chosen as the application database. This was ultimately a big decision as the application could have used any assortment of SQL style databases, a noSQL database, or could have gone with a graph database, or possibly even a document store.
+\\ This database uses an INNODB engine, which allows for full transaction support, various levels of locking, such as row-locking, and has full ACID compliance. The alternative which could have been used is a MYISAM engine, which supports different functionality which would not have suited the application.
 
 \subsection{Schemas}
-Due to the nature of our application we only needed a handful of schemas to handle the information saved throughout the application. The information being held is relatively straightforward. For each of the tables they need a unique identifier. In the case of schemas: User; Channel; Message; and Session; this was handled with the use of an auto-incrementing integer value, which increments by 1 per entry and starts at various values in respect to each table i.e. User will auto-increment from 100, Channel will auto-increment from 200 and so on. These auto-incrementing values are used in the form of the primary key for those tables with an alias of ‘id’ for each table allow for an ease of lookup, along with an O(1) time-complexity for look-up.
+Due to the nature of the application only a handful of schemas were needed to handle the information saved throughout the application. The information being held is relatively straightforward. For each of the tables they need a unique identifier. In the case of schemas: User; Channel; Message; and Session; this was handled with the use of an auto-incrementing integer value, which increments by 1 per entry and starts at various values in respect to each table i.e. User will auto-increment from 100, Channel will auto-increment from 200 and so on. These auto-incrementing values are used in the form of the primary key for those tables with an alias of ‘id’ for each table allow for an ease of lookup, along with an O(1) time-complexity for look-up.
 \\ The other remaining table, Member, uses foreign key values in a unique combination to handle look up, instead of a primary key value. For the most part, since there are few components of entry in each schema, the varaibles are given a ‘NOT NULL’ modifier, which means that data has to be given to them in order to avoid errors being raised.
 \\ The database uses UTF-8 default as it’s character set, and utf8\_general\_ci as it’s collate set.
 \\ The following schemas use cascading update, and cascading delete: Channel; Message; Session; Member. This allows for safe removal or modification of data, without setting null values.
 
 \subsubsection{User Schema}
-This schema handles the user information and was the first schema we had to think about. The User table is broken down into 3 components: ‘id’, ‘name’, ‘password’.
+This schema handles the user information and was the first schema which had to be thought about.
+\\ The User table is broken down into 3 components: ‘id’, ‘name’, ‘password’.
 \\The ‘id’ of this table is described above, as an unsigned auto-incrementing integer starting at 100.
 \\The ‘name’ is stored as a varchar of size 32 with a not-null modifier. This allows for an adequate size of allocated storage for the user name. The purpose of limiting the character is for memory preservation. The ‘name’ acts as a unique key to this schema. This is to avoid any duplication errors for any new users being inputted into the table, and also serves as a reference point should the ‘name’ need to be queried without explicitly knowing the ‘id’ beforehand. 
 \\The ‘password’ is stored after it is hashed and salted using the bcrypt hashing function, which utilises the blowfish cipher. It is stored as a varchar of size 255 with a not null modifier.
