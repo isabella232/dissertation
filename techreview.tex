@@ -36,7 +36,7 @@ Communication between the UI and business logic is very similar to Model View Vi
 \\ The model is the data from a source like a database or WebSocket.
 \\ The view is the UI, a Page or widget.
 \\ The view model is the business logic which sits in the middle between the UI and the data. Its job is to provide data in a form that the UI can interpret and present, but it knows nothing about the UI itself. This is different from the MVP architecture[ADD ME: 3].
-See Figure~\ref{image:mvvmDiagram} and Figure ~\ref{image:vertexArch}.
+See Figure~\ref{image:mvvmDiagram} and Figure~\ref{image:vertexArch}.
 
 \begin{figure}[h!]
     \caption{Model View ViewModel Diagram}
@@ -51,6 +51,56 @@ See Figure~\ref{image:mvvmDiagram} and Figure ~\ref{image:vertexArch}.
     \centering
     \includegraphics[width=1.0\textwidth]{images/vertex_arch.png}
 \end{figure}
+
+\subsection{State Management and Bloc}
+The Bloc (Business Logic Component) pattern is another state management solution that allows the decoupling of the business logic from the view. Think MVVM(Model-View-ViewModel) pattern but just replace the ViewModel with Bloc. 
+See Figure~\ref{image:mvvmDiagram}
+
+\begin{figure}[h!]
+    \caption{Bloc Pattern Diagram}
+    \label{image:blocPattern}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/Bloc_diagram.png}
+\end{figure}
+
+In Flutter there is no data binding. Instead, the Bloc uses the Streams to expose the data in the view it is needed in. The view waits and listens to the exposed stream and will update its UI accordingly. 
+
+\subsection{Navigation}
+Navigation is a key part to any mobile application, however limitations often exist when displaying data in terms of screen real-estate.  Flutter has a few options when it comes to navigation. These are:
+\begin{enumerate}
+    \item Popping from the stack
+    \item Routes
+\end{enumerate}
+
+\subsubsection{Popping from the Stack}
+As Flutter is built up from a stack of widgets, when you navigate to another page you push a new widget onto the stack, when you go back you'll pop from the stack. 
+
+\subsubsection{Navigation using Routes}
+Navigation in Flutter is based around the idea of routes. 
+\\ Routes are similar to the routes you would find in a REST API, where each route is relative to some root. In Flutter, the ‘main()’ acts as the route in the application and all other routes are relative to that one. 
+
+\subsection{Inversion Of Control}
+Flutter has three main forms of dependency injection to get objects where they are needed. These are:
+\begin{enumerate}
+    \item Inherited Widget
+    \item get\_it
+    \item Provider
+\end{enumerate}
+
+Dependency injection is writing code that supplies the objects with other objects that they depend on. Typically dependencies are passed through the classes constructor which work fine for accessing data one or two levels down. It becomes an issue when all of a sudden a widget is 5 levels deep in the widget tree and you need access to a data object in a class. 
+
+\subsubsection{Inherited Widget}
+Inherited widget is built into Flutter, it is a widget that allows access though the BuildContext to all properties to every widget in its sub-tree. Inherited widget is used in MediaQueries and themes as well as anything else the base app provides.
+
+\subsubsection{get\_it}
+'get\_it' is a service locator package developed by the Flutter Community. 'get\_it' is set up by creating a locator.dart file and adding an instance of 'get\_it' globally that can be accessed anywhere it is imported throughout the application. A function the locator class is created which is where services are registered. The function in the locator class is called in the main() function before runApp() is called.
+\\ Class types Factory and Singleton can be registered with the service. Factory is where a new instance is returned every time it is called. Singleton keeps a single instance of the resisted service and returns that one each time it is called.
+
+\subsubsection{Provider}
+Provider is a Flutter Community based package which is basically an Inherited widget upgrade. It provides types like StreamProvider, ChangeNotifyProvider, ListenableProvider that can be used to build a storage robust architecture for a mobile application.
+
+\subsection{Data Models}
+Models are important in any application as the app could work with various types of data. Data models are effective in-memory where screens can fetch data as needed. Dart serialization is also handled in the model class using 'dart:convert' package, '.fromJson()' for constructing a new object from a map structure, and 'toJson()' method which converts an object instance into a map.
 
 % -- M
 \section{WebRTC}
