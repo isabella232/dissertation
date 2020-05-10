@@ -16,7 +16,14 @@ See Figure~\ref{image:models}.
 
 \subsection{View Models}
 A view model's purpose is to take data from a source and put it into a presentable form that the UI can interpret.
-\\ Vertex uses four view-models to handle CRUD (Create, Read, Update, Delete) operations and update state. To understand how one works see figure~\ref{image:channelViewModel} for a breakdown of the class.
+\\ Vertex uses four view-models to handle CRUD (Create, Read, Update, Delete) operations and update state figure~\ref{image:vertexArch}. To understand how one works see figure~\ref{image:channelViewModel} for a breakdown of the class.
+
+\begin{figure}[h!]
+    \caption{Vertex Architecture}
+    \label{image:vertexArch}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/vertex_arch.png}
+\end{figure}
 
 \begin{figure}[h!]
     \caption{Channel View Model Code Example}
@@ -298,14 +305,14 @@ Peers need to be able to exchange ICE candidates to be able to create a direct c
 Each ICE message suggests a communication protocol (TCP or UDP), IP address, port number and connection type along with other information needed to link two computers together.
 
 \subsubsection {Connection Termination}
-This is not an essential part of the protocol, but rather to allow the clients to update the state of their application when a call ends. It works well to send a message to the peers a message that the call has ended.
+This is not an essential part of the protocol, but rather to allow the clients to update the state of their application when a call ends
 \begin{itemize}
     \item type - bye
     \item session\_id - This is made when two peers connect to each other. It is both of their ids with a - to delimit them.
     \item from - id of the peer that sent the bye message.
 \end{itemize}
 
-The session is slip up so two id are available and a “bye” message is sent to both.
+The session is split up so two ids are available and a “bye” message is sent to both.
 \\ The WebRTC signalling server was developed using Typescript and Node, getting into the code firstly a secure websocket(WSS) needed to be defined as WebRTC requires a secure connection to exchange data between peers that are looking to communicate. 
 \\ To create a secure websocket a HTTPS server needs to be created first with SSL
 Certificates, this server will just a text message if routed to in a web browser. 
@@ -340,14 +347,14 @@ Note the following in figure~\ref{image:webRTCSigServSwitchCode}:
 \end{enumerate}
 
 \subsection{WebRTC Implementation in Flutter}
-Implementing WebRTC was aided with the flutter-webRTC package[ADD ME: 3], developed by CloudWebRTC[ADD ME: 4]. The package supports Android, iOS, Web and MacOS and its feature set for all those platforms are:
+Implementing WebRTC was aided with the flutter-webRtc\cite{FlutterWebRTC}, developed by CloudWebRTC\cite{cloudWeb}. The package supports Android, iOS, Web and MacOS and its feature set for all those platforms are:
 \begin{enumerate}
     \item Audio/Voice Calls
     \item Data Channel
     \item Screen Capture
 \end{enumerate}
-The package is imported into the project by listing it as a dependency in the applications pubspec file. CloudWebRTC have a flutter-webrtc-demo available on their git repository[ADD ME: 5] which code from there was based on and adapted to use in Vertex.
-\\ Vertex allows two peers to communicate via video call or voice call, in order for peers to communicate they must first connect to a signalling server.
+The package is imported into the project by listing it as a dependency in the applications pubspec file. CloudWebRTC have a flutter-webrtc-demo available on their git repository\cite{webrtc-demo} which code from there was based on and adapted to use in Vertex.
+\\ Vertex allows two peers to communicate via video call or voice call, in order for peers to communicate they must first connect to a signalling server. 
 \\ As talked about in section~\ref{handleStateWebRTC}, a websocket is used to connect Vertex to the signalling server to send and receive messages. 
 \\ When the client connects to the server it sends information about itself to the server so other peers can see it listed as somebody to connect to. 
 
@@ -400,74 +407,6 @@ The remote description is set and finally the create answer function is called w
 
 As previously discussed in  section~\ref{handleStateWebRTC}, all state is managed in the view class where a switch statement listens to signalling state in the callback function in the signaling class.
 \\ Finally for WebRTC when a peer wishes to end a class with a remote peer a bye message is sent to the signaling server where that will send the message onto the remote peer as well as return it to the local peer so both peers can update their applications state and close the connection.  
-
-
-
-% -- M
-\section{Screen Shots}
-Login Page See Figure~\ref{image:loginPage}
-\begin{figure}[h!]
-    \caption{Login Page}
-    \label{image:loginPage}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/loginPage.png}
-\end{figure}
-
-Register Page See Figure~\ref{image:registerPage}
-\begin{figure}[h!]
-    \caption{Register Page}
-    \label{image:registerPage}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/registerPage.png}
-\end{figure}
-
-Home Page See Figure~\ref{image:homePage}
-\begin{figure}[h!]
-    \caption{Home Page}
-    \label{image:homePage}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/homeScreen.png}
-\end{figure}
-
-Peer Connection Lobby See Figure~\ref{image:peerConnectionLobby}
-\begin{figure}[h!]
-    \caption{Peer Connection Lobby}
-    \label{image:peerConnectionLobby}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/callLobby.png}
-\end{figure}
-
-Successful WebRTC Functionality See Figure~\ref{image:webRTCProof}
-\begin{figure}[h!]
-    \caption{Successful WebRTC Functionality}
-    \label{image:webRTCProof}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/webRTCProof.png}
-\end{figure}
-
-Channel Creation See Figure~\ref{image:channelCreation}
-\begin{figure}[h!]
-    \caption{Channel Creation}
-    \label{image:channelCreation}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/channelCreation.png}
-\end{figure}
-
-Channel Deletion See Figure~\ref{image:channelDeletion}
-\begin{figure}[h!]
-    \caption{Channel Deletion}
-    \label{image:channelDeletion}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/channelDeletion.png}
-\end{figure}
-
-Settings Page See Figure~\ref{image:settingsPage}
-\begin{figure}[h!]
-    \caption{Settings Page}
-    \label{image:settingsPage}
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/settingsPage.png}
-\end{figure}
 
 
 \section{Database}
