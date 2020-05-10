@@ -1,5 +1,4 @@
 \chapter{Technology Review}
-% -- C
 \section{OpenAPI}
 The OpenAPI specification is a machine readable format for designed to describe RESTful APIs. Being machine readable,
 there exists a lot of excellent OpenAPI compliant tooling available to help more efficiently design and test APIs. Our
@@ -49,6 +48,12 @@ All of the repositories used in this project belong to the VertexChat organisati
 the organisation would first fork the repository they wanted to contribute to and make any code-changes to their own fork. Once a feature was completed they then would submit their code upstream in the form of a pull request. Having individual forks proved to be a very easy workflow to follow and helped keep the project clean and well structured. With each collaborator using their own forks it was possible to avoid a number of issues that can arise when multiple users are committing directly to master. Requiring each member to make pull requests helped ensure overall better code quality.  Pull requests introduced a code review stage for all changes to master by requiring all changes to be approved by another member of the team before it gets merged upstream. GitHub's web-interface makes it very easy to review a pull request and allows comments to be exchanged between reviewers and the contributor as well as clarifications to be made before any code get committed to the master branch.
 
 \section{Flutter}
+Flutter is a user interface SDK (Software Development Kit) and also a framework for Dart. Dart is a programming language developed by Google, Flutter is developed by Google.
+Both Flutter and Dart are used to build user interfaces that Google are calling widgets. Flutter provides their own pre-configured widgets under catalogs on their website e.g layouts, input and material components. These pre-configured widgets can then be used to build your own widgets to the needs of the application.
+With Flutter being an SDK that is set functionalities for the development of an application using it. Development server, hot reload of the app on an emulator or real device and also deployment that will compile the applications code to native code.
+Flutter provides DevTools, it is a suite of performance and debugging tools for Dart and Flutter. It can be installed via the CLI or in Android Studio / Intellij, two IDEs made by Intellij.
+
+
 Flutter was used to develop the user interface for this application. When building the architecture for a mobile application, four main pillars need to be accounted for. These are:
 \begin{enumerate}
 	\item State Management
@@ -69,7 +74,7 @@ The architecture for Vertex follows this principle. The business logic in the mi
 
 \subsubsection{So, what is Provider?}
 Provider is a state management helper. It is a widget that makes some value - such as a state model object, accessible to the widgets below it.
-\\ A Consumer widget, which is part of the provider package[ADD ME: 1], listens for changes in the values and then rebuilds the widgets below itself when changes occur.
+\\ A Consumer widget, which is part of the provider package\cite{provider}, listens for changes in the values and then rebuilds the widgets below itself when changes occur.
 See Figure~\ref{image:providerTree}.
 
 \begin{figure}[h!]
@@ -80,10 +85,10 @@ See Figure~\ref{image:providerTree}.
 \end{figure}
 
 \subsection{Business Logic Communications}
-Communication between the UI and business logic is very similar to Model View ViewModel (MVVM) architecture used in most modern day web applications[ADD ME: 2].
+Communication between the UI and business logic is very similar to Model View ViewModel (MVVM) architecture used in most modern day web applications.
 \\ The model is the data from a source like a database or WebSocket.
 \\ The view is the UI, a Page or widget.
-\\ The view model is the business logic which sits in the middle between the UI and the data. Its job is to provide data in a form that the UI can interpret and present, but it knows nothing about the UI itself. This is different from the MVP architecture[ADD ME: 3].
+\\ The view model is the business logic which sits in the middle between the UI and the data. Its job is to provide data in a form that the UI can interpret and present, but it knows nothing about the UI itself. This is different from the MVP architecture.
 See Figure~\ref{image:mvvmDiagram} and Figure~\ref{image:vertexArch}.
 
 \begin{figure}[h!]
@@ -91,13 +96,6 @@ See Figure~\ref{image:mvvmDiagram} and Figure~\ref{image:vertexArch}.
     \label{image:mvvmDiagram}
     \centering
     \includegraphics[width=0.9\textwidth]{images/mvvm_diagram.png}
-\end{figure}
-
-\begin{figure}[h!]
-    \caption{Vertex Architecture}
-    \label{image:vertexArch}
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/vertex_arch.png}
 \end{figure}
 
 \subsection{State Management and Bloc}
@@ -150,7 +148,6 @@ Provider is a Flutter Community based package which is basically an Inherited wi
 \subsection{Data Models}
 Models are important in any application as the app could work with various types of data. Data models are effective in-memory where screens can fetch data as needed. Dart serialization is also handled in the model class using 'dart:convert' package, '.fromJson()' for constructing a new object from a map structure, and 'toJson()' method which converts an object instance into a map.
 
-% -- M
 \section{WebRTC}
 \label{webRTCTR}
 Web Real-Time Communication (WebRTC), is an important tool in relation to this project, and offers real-time communication with web-browsers and mobile applications, and is built and managed in an open source fashion. WebRTC offers the likes of direct file sharing, and peer-to-peer media, without the need for an intermediary server or the use of third-party software \cite{johnston2012webrtc}. 
@@ -166,6 +163,7 @@ The client-server paradigm is generally regarded as the classic semantics for we
 The schematics for client-server WebRTC are extended between browsers with the introductions of peer-to-peer communication paradigm. The generally used architectural model draws its inspiration from the Session Initiation Protocol Trapezoid. However, the most common scenario for WebRTC is the architectural model depicted in figure~\ref{image:simpleWebRTCSystem} \cite{loreto2014real}.
 
 \subsection{Signaling}
+\label{signallingTechR}
 Complete specific control of the media plane, while having as much of the signalling plane as possible left to the application layer, is the design idea for WebRTC. The reason being the a variety of applications may opt to use different signaling protocols.
 \\ The most important information that needs to be sent is the session description, which specifies the information on transport, as well as the type of media, the format, and the collection of associated media configuration parameters needed to establish paths for media \cite{loreto2014real}.
 
@@ -237,7 +235,7 @@ Figure~\ref{image:webRTCCommsArch}. displays the architecture, at a higher level
 \end{figure}
 
 \begin{figure}[h!]
-    \caption{Communication Protocol between Peers.}
+    \caption{Communication Protocol between Peers \cite{14003034520191201}}
     \label{image:commsProtocol}
     \centering
     \includegraphics[width=0.8\textwidth]{images/CommunicationProtocol.png}
@@ -300,4 +298,4 @@ See section \ref{rdbms} for in-depth explanation.
 \subsubsection{Non-Realtime Database}
 Depending on the configuration of the database, data may not be reachable in real time. This has a few factors hinging on it such as transactions and locking, where-as Firebase has constant synchronisation.
 \subsubsection{Query Friendly}
-SQL based databases have the ability to handle complex queries, which allows for greater flexibility  in terms of data upload and retrieval. Whereas NoSQL databases are designed to handle a lower level of queries which are meant to be quite simpler.
+SQL based databases have the ability to handle complex queries, which allows for greater flexibility  in terms of data upload and retrieval. Whereas NoSQL databases are designed to handle a lower level of queries which are meant to be quite simpler. 
