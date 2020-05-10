@@ -35,20 +35,12 @@ During the development of any project there comes a points were run-time excepti
 As previously discussed in section~\ref{signallingTechR} WebRTC relies on a signalling server as peers need to send there session description which specifies the information on transport as well as media type. The signalling server is an external service away from the local client so it is possible the server could be offline or not reachable. To manage the applications state if this happens occurs
 a SignallingState is returned from the application's web socket to the view letting the view know that it would display a message to the user that the server is not available. Figure~\ref{image:connectionError} displays an example of the error
 
-
 \begin{figure}[h!]
     \caption{Connection Error}
     \label{image:connectionError}
     \centering
     \includegraphics[width=0.8\textwidth]{images/screenshotsOfPages/connectionError.png}
 \end{figure}
-         
-\subsection{Form Validation}
-Another area where potential errors might occur is user input, for example when they are logging into their account. A username and a password is required 
-
-\subsection{Client Requests}
-
-
 
 \section{Issues Encountered}
 There were a number of issues that occurred during the development project. This section will break down some of the cores issues and how they were dealt with. 
