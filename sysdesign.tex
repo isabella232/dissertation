@@ -93,6 +93,7 @@ Note the following in figure~\ref{image:messageViewBuilder}:
 \end{enumerate}
 
 \subsection{Handling State For WebRTC}
+\label{handleStateWebRTC}
 The state management is handled a little differently for WebRTC class due to a WebSocket being used to send and receive messages between the WebRTC signalling server. Voice and Video class handle state the same way just in different classes.
 \\ When a user wishes to start a video call, the UI class creates an instance of the Signaling class, this class is in charge of connecting to the signalling server, gathering peer data, processing message events and setting up calls with peers when a peer is invited. See Figure~\ref{image:videoSignallingConnectFunc}.
 \begin{figure}[h!]
@@ -114,6 +115,293 @@ Note the following in figure~\ref{image:videoSignallingConnectFunc} on the right
 	\item An instance of SimpleWebSocket created passing it the URL to connect to the WebRTC signalling server.
     \item When the socket opens the connections to the server two new SignallingStates are set, \textit{SignalingState.ConnectionOpen} to notify of the connection successfully opened and \textit{SignallingState.FetchingData} to notify the UI its gathering data from the server, this allows the Video UI class to display a progress bar until the data is received back and the SignallingState is set to \textit{SignallingState.ReceivedData}. All messages that are received are processed accordingly and the appropriate state is set.
 \end{enumerate}
+
+\subsection{Implementing Bloc Pattern with Authentication Service for Login \& Register}
+The Login and Register components of the application were developed using the Bloc pattern, which worked well with the view and the business logic, as it stream-lines events like navigation and form validation, which is the main purpose of the login and register views. The stream events made it easy to implement an Authentication State listen which would manage logged in access to the application depending on the login request result.
+\\ Figure~\ref{image:authServiceClass} defines a Broadcaster/Observable object that can notify its Subscribers of any changes of its authentication state, whether logged in or not. Normally get\_it would be used to inject the service into the application, or the Redux package, but for the applications needs manually implementing it fit the design better.
+
+\begin{figure}[h!]
+    \caption{Authentication Service Class Example}
+    \label{image:authServiceClass}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/authentication_service_class.png}
+\end{figure}
+
+Note the following in figure~\ref{image:authServiceClass}
+\begin{enumerate}
+    \item A factory constructor is declared at the top of the class using Dart's built factory constructor. This allows other classes to retrieve an instance of the class.
+    \item initState() declares an instance of the AccountApi(), which are the client-stubs for the server that allow access to the isLoggedIn variable in the AccountApi() class. This variable is set depending on the result of a login being successful or not. The notify function is called where it will update each subscriber if the user is logged in or not.
+    \item The subscribe() adds a new listener to the list so they can be notified of changes in login.
+    \item The dispose() will remove a listener from the list.
+\end{enumerate}
+Referring back to the Bloc pattern, figure~\ref{image:loginViewPresenter} represents the same set up for both the Login and Register components. For the purpose of demonstration only one is displayed. Figure~\ref{image:loginViewPresenter} shows the login view presenter.
+
+\begin{figure}[h!]
+    \caption{Login View Presenter}
+    \label{image:loginViewPresenter}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/login_presenter_class.png}
+\end{figure}
+
+Note the following in figure~\ref{image:loginViewPresenter}:
+\begin{enumerate}
+    \item The class defines an interface for the LoginView and a presenter that will handle all the business logic specified to LoginView.
+    \item An instance of the AccountApi() is declared as a login request will need to be made to authenticate an account with the server.
+    \item User account is fetched after a login is successful and details are stored.
+\end{enumerate}
+
+Figure~\ref{image:loginViewClass} and figure~\ref{image:loginBloc} breakdown the login view class with the implementation of authentication service and Bloc pattern. 
+
+\begin{figure}[h!]
+    \caption{Login View Class}
+    \label{image:loginViewClass}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/login_view_class_1.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Login Bloc}
+    \label{image:loginBloc}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/login_bloc.png}
+\end{figure}
+
+Note the following in figure~\ref{image:loginViewClass}:
+\begin{enumerate}
+    \item The LoginScreenContract abstract class is implemented which imports its function onLoginSuccess() and onLoginError() these function will now be able to update the views state depending on the business logic in the LoginScreenPresenter class.
+    \item AuthStateListener is also implemented which imports onAuthStateChanged, this now allows the login state to be updated if a login is successful in the onLoginSuccess(). The user is then navigated to the HomeRoute using the navigation service.
+    \item The rest of the class builds the form UI for users to login with their details.
+\end{enumerate}
+
+Note the following in figure~\ref{image:loginBloc}:
+\begin{enumerate}
+    \item The LoginBloc class is used to read in the stream on data from the form text controller, validate it using the validators and return true to the StreamBuilder in the LoginView class where its state will update.
+\end{enumerate}
+The Bloc pattern worked very well when implemented for the login and registration but its overall design compared to the Provider architecture required more code for the same outcome so ultimately Provider fit the applications needs better for state management.
+
+\subsection{Navigation Implementation}
+\label{NavSection}
+Vertex started out as an application that was going to be on iOS, Android and Web, so with that navigation took some planning and consideration as it would need to be a mix of pop on and off the stack using widgets as well as routing.
+\\ Initially the app started out with the pop on pop off theme while developing the login, register and main home page. While this worked, as more views were implemented, and data needed to be passed around the app, it needed to be revisited. It quickly became apparent that that navigation was needed where the BuildContext was not always available.
+\\ To overcome this issue a navigation service was created which would use a GlobalKey that is unique across the app. A GlobalKey provides access to other objects that are associated with those elements, such as the BuildContext. For Stateful Widgets, global keys also provide access to its State. This method of navigation was much more useful so it became incorporated across the application. 
+\\ Two Navigation services were created:
+\begin{enumerate}
+    \item NavigationService which handles global routes by their route name.
+    \item NavgationServerHome which handles internal routes that only buttons interaction can be used to navigate to its routes. These routes require data models to be passed with them.
+\end{enumerate}
+
+\begin{figure}[h!]
+    \caption{Navigation Service}
+    \label{image:navService}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/navigation_service_class.png}
+\end{figure}
+
+Note the following in figure~\ref{image:navService}:
+\begin{enumerate}
+    \item GlobalKey for NavigatorState is create.
+    \item Future function navigateTo requires an arguments routeName which is the route name that is going to be navigated too.
+\end{enumerate}
+
+NavigationServiceHome is the same, only it always can accept a dynamic argument as well. This dynamic argument is mostly a channel data model. The two services are registered in locator.dart file using 'get\_it' where they are accessible anywhere throughout the application using locatorGlobal<NavigationService>().navigateTo(routeName).
+\\ A class called router.dart has two functions declared inside it which are switch statements:
+\begin{enumerate}
+    \item generateRoutes, which allows access to the HomeRoute, SettingsRoute, LoginRoute and RegisterRoute through the UI Widgets onGenerateRoute declared in the Widget.
+    \item internalRoutes which allow access to the MessageRoute, VoiceChannelRoute, LandingPageRoute, and EditChannelRoute through the HomeLayoutTemplate Widgets onGenerateRoute.
+\end{enumerate}
+The internal routes lead into section~\ref{UI} and why it was needed.
+
+\subsection{User Interface}
+\label{UI}
+The user interface started out with some basic views that would change when you navigate to another page that's fine it works but it didn't fit the need of the application. With the app being a communication application with different channels it became apparent that a UI would need to be designed where one section of the view could stay the same for the most part while other parts were capable of being updated with a different view on user interaction. See figure~\ref{image:vertexHomePage} 
+\begin{figure}[h!]
+    \caption{Vertex Home Page}
+    \label{image:vertexHomePage}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/vertex_homehome_view.png}
+\end{figure}
+
+Note the following in figure~\ref{image:vertexHomePage}:
+\begin{enumerate}
+    \item While the user is on the home page they can navigate between channels they select on the right and the left side rectangle will update its view to reflect the channel the user has selected.
+    \item The List of channels will stay displayed on the right unless the user navigates to setting, video call or logout which are the three button icons on the very top right of the figure. The icon buttons below that allow the user view a list of members in the channel they are currently in, navigate to home which is a home view inside the rectangle on the right or display settings for that channel whereby a user can update the channel name or delete the channel. 
+\end{enumerate}
+
+To achieve this user interface design, a layout template was designed that would handle its own navigation routes, that is where the internalRoutes function talked about in the section~\ref{NavSection} comes into play. The layout allows the Landing view, message view and voice call view to be rendered inside that template while keeping the external view the same.
+\\ With the application being developed for both mobile platforms and web a responsive design needed to also be implemented into the application so that the above views would render correctly on all platforms. A package called responsive\_builder developed by the Flutter community was used to achieve the layout across multiple platforms and screen sizes.
+
+\begin{figure}[h!]
+    \caption{Settings Folder Tree}
+    \label{image:settingsFolderTree}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/settings_folder_tree.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Settings UI Widget}
+    \label{image:settingsUIWidget}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/settings_ui_widget.png}
+\end{figure}
+
+Note the following in figure~\ref{image:settingsFolderTree} and figure~\ref{image:settingsUIWidget}:
+\begin{enumerate}
+    \item The settings folder holds settings\_page which is displayed in figure~\ref{image:settingsUIWidget}, that returns either settings\_view\_mobile or settings\_view\_web.dart depending on the screen layout and size.
+\end{enumerate}
+
+The main home widgets handle building the UI the same way. With the responsive build now implemented, when a browser window is resized the application will respond to that change and rebuild the UI. See figure~\ref{image:mainWindow} and figure~\ref{image:mainWindowOpenDrawer}. It may not seem like much but a lot of planning around how to implement this was very much needed as the application was going to be running on a browser as well as mobile devices which all can vary in screen size.
+
+\begin{figure}[h!]
+    \caption{Home Page}
+    \label{image:mainWindow}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/resized_window_main.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Home Page with Open Navigation Drawer}
+    \label{image:mainWindowOpenDrawer}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/resized_window_drawer_open.png}
+\end{figure}
+
+\subsection{WebRTC Signalling Server}
+As previously discussed in section~\ref{webRTCTR},  establishing a WebRTC connection between two devices requires a signalling server to resolve how peers can connect over the internet. A signaling servers job is to act as a link in the middle of two peers that wish to connect to each other. WebRTC doesn't specify a transport mechanism for signaling information so a WebSocket is used to send and receive messages from client to server.
+\\ The signalling server does not need to understand or interpret the signalling data. SDP data is sent to enable WebRTC class but the socket doesn't need to worry about understanding it. What is important when the ICE instructs the websocket to send signaling data to another peer. When the other peer receives information  it knows how to receive the information and deliver it to its own ICE subsystem. All the signalling server has to do is channel the information back and forth, the context doesn't matter at all to the signalling server.
+\\ The WebSocket sends information between client and server using a JSON string. The server processes several event types that are in the JSON message such  as “new” which will add a new peer(connection) to the websockets array list and return the list to all peers connected, candidate which is a peer that wishes to communicate with another and bye which will end a call between two peers.
+
+\subsubsection{Signalling Protocol Design}
+Now that the websocket is able to exchange messages a protocol needs to be defined of how the message will look. A stringified JSON object is used to communicate with its clients, this means the websockets message will also be in JSON format with implementation of what type of message it is and any additional data needed.
+
+\subsubsection{Peer Connection Exchange}
+Vertex displays a list of peers connected to the websocket as they are peers that wish to commute. When a new client connects to the websocket it will send a message to the server with information about itself. The messages have the following fields:
+\begin{itemize}
+    \item type - The message type: “new”
+    \item device\_name - The type of device the peer is on and connected with to the server.
+    \item username - The peers username. In a normal design this can be left out. For the sake of Vertex it was easier to distinguish who is trying to connect to who and who's in a call with you.
+    \item user\_agent - This has information about the operating system the peer is using.
+\end{itemize}
+When a message type “new” is received, the connection array is updated with the new connection and the new connection peer information is sent to all currently connected peers.
+\\ This allows the client application to update its UI with available peers to connect to. 
+
+\subsubsection{ICE Candidate Exchange}
+Peers need to be able to exchange ICE candidates to be able to create a direct connection between them. An 'icecandiate' event is sent to the RTCPeerConnection to complete the process of adding a local description using 'pc.setLocalDescription(offer)'.
+\\ Once two peers agree on a mutually-compatible candidate, that candidate SDP is used by each peer to open a connection, by which media is sent between each of them so they can communicate.
+\\ Each ICE candidate is sent to the other peer by the following message with these fields: 
+\begin{itemize}
+    \item type - candidate.
+    \item to - id of peer being sent to.
+    \item id - id of the peer sending the candidate message.
+    \item candidate - SDP candidate string, with information describing a proposed connection method. This message is just passed onto the peer with the id that is equal “to”.
+\end{itemize}
+
+Each ICE message suggests a communication protocol (TCP or UDP), IP address, port number and connection type along with other information needed to link two computers together.
+
+\subsubsection {Connection Termination}
+This is not an essential part of the protocol, but rather to allow the clients to update the state of their application when a call ends. It works well to send a message to the peers a message that the call has ended.
+\begin{itemize}
+    \item type - bye
+    \item session\_id - This is made when two peers connect to each other. It is both of their ids with a - to delimit them.
+    \item from - id of the peer that sent the bye message.
+\end{itemize}
+
+The session is slip up so two id are available and a “bye” message is sent to both.
+\\ The WebRTC signalling server was developed using Typescript and Node, getting into the code firstly a secure websocket(WSS) needed to be defined as WebRTC requires a secure connection to exchange data between peers that are looking to communicate. 
+\\ To create a secure websocket a HTTPS server needs to be created first with SSL
+Certificates, this server will just a text message if routed to in a web browser. 
+
+\begin{figure}[h!]
+    \caption{WebRTC Signalling Server Code Example}
+    \label{image:webRTCSigServCode}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/webrtc_signalling_server_code.png}
+\end{figure}
+
+Note the following in figure~\ref{webRTCSigServCode}:
+\begin{enumerate}
+    \item The SSL certs are read.
+    \item A HTTPS server is created with a response message.
+    \item The HTTPS server is started on port 8086
+    \item The HTTPS server is passed into a WebSocket to create a secure web socket that is capable of allowing WebRTC clients to connect to it.
+\end{enumerate}
+
+\begin{figure}[h!]
+    \caption{WebRTC Signalling Server  Switch Code Example}
+    \label{image:webRTCSigServSwitchCode}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/signalling_server_switch_code.png}
+\end{figure}
+
+Note the following in figure~\ref{image:webRTCSigServSwitchCode}:
+\begin{enumerate}
+    \item Connections to the websocket are assigned if that are passed in the message from the client. The data in the message is also assigned to the connection.
+    \item The switch statement handles the message type and processes the message accordingly.
+    \item In the candidate case, a “to” id is checked for in the request message from a peer, the candidate data is then sent onto that peer by looping through the connections array and finding the connection that equals the “to” id.
+\end{enumerate}
+
+\subsection{WebRTC Implementation in Flutter}
+Implementing WebRTC was aided with the flutter-webRTC package[ADD ME: 3], developed by CloudWebRTC[ADD ME: 4]. The package supports Android, iOS, Web and MacOS and its feature set for all those platforms are:
+\begin{enumerate}
+    \item Audio/Voice Calls
+    \item Data Channel
+    \item Screen Capture
+\end{enumerate}
+The package is imported into the project by listing it as a dependency in the applications pubspec file. CloudWebRTC have a flutter-webrtc-demo available on their git repository[ADD ME: 5] which code from there was based on and adapted to use in Vertex.
+\\ Vertex allows two peers to communicate via video call or voice call, in order for peers to communicate they must first connect to a signalling server.
+\\ As talked about in section~\ref{handleStateWebRTC}, a websocket is used to connect Vertex to the signalling server to send and receive messages. 
+\\ When the client connects to the server it sends information about itself to the server so other peers can see it listed as somebody to connect to. 
+
+\begin{figure}[h!]
+    \caption{Connect Message Example}
+    \label{image:connectMessageExample}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/new_connnect_message.png}
+\end{figure}
+
+The local peer and a list of connected peers are returned from the server where the data can be used to display the peers available in a list view. This view allows a peer to invite another peer listed in the view as seen in figure~\ref{image:voiceCallLobby}. When a peer is invited a peer connection is set up and a message with candidate information is sent onto the server where that is sent to the peer that was invited to the call.
+
+\begin{figure}[h!]
+    \caption{Voice Call Lobby}
+    \label{image:voiceCallLobby}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/voiceCallLobby.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Peer Connect Function}
+    \label{image:peerConnectFunction}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/connect_peer_function.png}
+\end{figure}
+Note the following in figure~\ref{image:peerConnectFunction}:
+\begin{enumerate}
+    \item A local stream is created using the media constraints defined in the createStream()
+    \item A RTCPeerConnection is created passing it \_iceServers which is a map with a url of an iceserver and \_config which holds an optional argument to allow Chrome and Firefox to communicate.
+    \item The \_localStream is added to the RTCPeerConnection as it holds information about the media of the local stream.
+    \item The RTCPeerConnection is returned.
+\end{enumerate}
+
+When the peer connection is returned an offer is then made sending the SDP and media to the remote peer via the signalling server. See figure~\ref{image:createOfferFunc}
+\begin{figure}[h!]
+    \caption{Offer Creation}
+    \label{image:createOfferFunc}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/create_offer_funtion.png}
+\end{figure}
+
+Once the remote peer receives the offer as in the figure below, a peer connection is created,
+The remote description is set and finally the create answer function is called where that will send on its RTCSessionDescription to the peer that wishes to connect. One received both peers will be connected over their own encrypted connection. See figure~\ref{image:offerCaseCode}
+\begin{figure}[h!]
+    \caption{Offer Case Code Example}
+    \label{image:offerCaseCode}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/offer_case_code.png}
+\end{figure}
+
+As previously discussed in  section~\ref{handleStateWebRTC}, all state is managed in the view class where a switch statement listens to signalling state in the callback function in the signaling class.
+\\ Finally for WebRTC when a peer wishes to end a class with a remote peer a bye message is sent to the signaling server where that will send the message onto the remote peer as well as return it to the local peer so both peers can update their applications state and close the connection.  
+
+
 
 % -- M
 \section{Screen Shots}
