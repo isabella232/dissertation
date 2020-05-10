@@ -1,12 +1,54 @@
 \chapter{Technology Review}
 % -- C
+\section{OpenAPI}
+The OpenAPI specification is a machine readable format for designed to describe RESTful APIs. Being machine readable,
+there exists a lot of excellent OpenAPI compliant tooling available to help more efficiently design and test APIs. Our
+team made great use of this fact while prototyping our API, generating client stubs, and maintaining
+accurate API documentation.
+
+Our API was primarily designed using a web-based tool called Apicurio Studio. Apicurio Studio made it very easy to
+visualise the API compared to using traditional text editors. It proved to be an invaluable tool as it allowed the team
+to develop the API without having to memorise the entire OpenAPI specification. Apicurio Studio drastically simplified
+the process of modifying the various endpoints, their required payloads / responses, HTTP methods, etc. Apicurio Studio
+also prompted the team to include documentation whenever creating or modifying components of the OpenAPI file. This
+served to enrich the Markdown documentation and client stubs that was also generated from the OpenAPI file.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/ApicurioStudio.png}
+    \caption{Apicurio API Editor}
+    \label{image:models}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/OpenAPI.png}
+    \caption{Raw OpenAPI File}
+    \label{image:models}
+\end{figure}
+
+\section{Version Control Software}
+
+\subsection{Git}
+We decided to use git as our version control software of choice. All of our team had experience using git both
+personally and for academic use; as such we were satisfied that git would allow use to work collaboratively and
+efficiently. By choosing a familiar piece of version control software such as git, it allowed us to focus primarily on
+developing the best possible product. Learning to use an entirely new piece of version control software may have been an
+interesting endeavour however after briefly considering other options we concluded none of them would not offer any
+substantial additional benefits to the project.
+
+\subsection{Github}
+Git is inherently a distributed system where every computer in the system has a copy of the entire history of code-base however it is very common practice to also use a centralised git server. Doing so allows each contributor to more easily share their code with others. Contributors can pulling down code-changes from other contributors and pushing their code for others to use. It is possible to create a git server however there are many companies offering hosted git services such as GitHub, Bitbucket, and GitLab. The team opted to use a git server provided by GitHub as it's owned by Microsoft and has developed an excellent reputation for proving secure and reliable services to groups ranging from small teams developing Open Source software to massive multinationals companies who rely on it for their day-to-day operations. As part of GitHub's web interface they also provides auxiliary tooling that is useful for team collaboration such as tools for tracking issues, providing feedback to proposed code changes, distributing releases, etc. GitHub also has very large community of users and a vast amount of documentation, this made GitHub an excellent choice as it was very easy to troubleshoot and find answers to any questions / problems we encountered.
+
+\subsection{Organisations}
+To structure of the project it was decided to make use of GitHub's "Organisations" feature. A Github Organisation is
+essentially a shared account which is responsible for a series of git repositories on GitHub. GitHub Organisations offer a lot of features which are applicable to groups such as a more robust permissions system. In our case the most attractive feature of a GitHub Organisation was the shared ownership component. Traditionally a project's repository was owned by a single user and any other users may contribute code upstream through pull requests. With the advent of GitHub Organisations the team was better able to share the project as each of the collaborators are all considered owners of the single "VertexChat" organisation and subsequently all of its repositories.
+
+\subsection{Forks}
+All of the repositories used in this project belong to the VertexChat organisation. To contribute code each member of
+the organisation would first fork the repository they wanted to contribute to and make any code-changes to their own fork. Once a feature was completed they then would submit their code upstream in the form of a pull request. Having individual forks proved to be a very easy workflow to follow and helped keep the project clean and well structured. With each collaborator using their own forks it was possible to avoid a number of issues that can arise when multiple users are committing directly to master. Requiring each member to make pull requests helped ensure overall better code quality.  Pull requests introduced a code review stage for all changes to master by requiring all changes to be approved by another member of the team before it gets merged upstream. GitHub's web-interface makes it very easy to review a pull request and allows comments to be exchanged between reviewers and the contributor as well as clarifications to be made before any code get committed to the master branch.
+
 \section{Flutter}
-Flutter is a user interface SDK (Software Development Kit) and also a framework for Dart. Dart is a programming language developed by Google, Flutter is developed by Google.
-Both Flutter and Dart are used to build user interfaces that Google are calling widgets. Flutter provides their own pre-configured widgets under catalogs on their website e.g layouts, input and material components. These pre-configured widgets can then be used to build your own widgets to the needs of the application.
-With Flutter being an SDK that is set functionalities for the development of an application using it. Development server, hot reload of the app on an emulator or real device and also deployment that will compile the applications code to native code.
-Flutter provides DevTools, it is a suite of performance and debugging tools for Dart and Flutter. It can be installed via the CLI or in Android Studio / Intellij, two IDEs made by Intellij.
-
-
 Flutter was used to develop the user interface for this application. When building the architecture for a mobile application, four main pillars need to be accounted for. These are:
 \begin{enumerate}
 	\item State Management
@@ -27,7 +69,7 @@ The architecture for Vertex follows this principle. The business logic in the mi
 
 \subsubsection{So, what is Provider?}
 Provider is a state management helper. It is a widget that makes some value - such as a state model object, accessible to the widgets below it.
-\\ A Consumer widget, which is part of the provider package\cite{provider}, listens for changes in the values and then rebuilds the widgets below itself when changes occur.
+\\ A Consumer widget, which is part of the provider package[ADD ME: 1], listens for changes in the values and then rebuilds the widgets below itself when changes occur.
 See Figure~\ref{image:providerTree}.
 
 \begin{figure}[h!]
@@ -38,10 +80,10 @@ See Figure~\ref{image:providerTree}.
 \end{figure}
 
 \subsection{Business Logic Communications}
-Communication between the UI and business logic is very similar to Model View ViewModel (MVVM) architecture used in most modern day web applications.
+Communication between the UI and business logic is very similar to Model View ViewModel (MVVM) architecture used in most modern day web applications[ADD ME: 2].
 \\ The model is the data from a source like a database or WebSocket.
 \\ The view is the UI, a Page or widget.
-\\ The view model is the business logic which sits in the middle between the UI and the data. Its job is to provide data in a form that the UI can interpret and present, but it knows nothing about the UI itself. This is different from the MVP architecture.
+\\ The view model is the business logic which sits in the middle between the UI and the data. Its job is to provide data in a form that the UI can interpret and present, but it knows nothing about the UI itself. This is different from the MVP architecture[ADD ME: 3].
 See Figure~\ref{image:mvvmDiagram} and Figure~\ref{image:vertexArch}.
 
 \begin{figure}[h!]
@@ -49,6 +91,13 @@ See Figure~\ref{image:mvvmDiagram} and Figure~\ref{image:vertexArch}.
     \label{image:mvvmDiagram}
     \centering
     \includegraphics[width=0.9\textwidth]{images/mvvm_diagram.png}
+\end{figure}
+
+\begin{figure}[h!]
+    \caption{Vertex Architecture}
+    \label{image:vertexArch}
+    \centering
+    \includegraphics[width=1.0\textwidth]{images/vertex_arch.png}
 \end{figure}
 
 \subsection{State Management and Bloc}
@@ -251,4 +300,4 @@ See section \ref{rdbms} for in-depth explanation.
 \subsubsection{Non-Realtime Database}
 Depending on the configuration of the database, data may not be reachable in real time. This has a few factors hinging on it such as transactions and locking, where-as Firebase has constant synchronisation.
 \subsubsection{Query Friendly}
-SQL based databases have the ability to handle complex queries, which allows for greater flexibility  in terms of data upload and retrieval. Whereas NoSQL databases are designed to handle a lower level of queries which are meant to be quite simpler. 
+SQL based databases have the ability to handle complex queries, which allows for greater flexibility  in terms of data upload and retrieval. Whereas NoSQL databases are designed to handle a lower level of queries which are meant to be quite simpler.

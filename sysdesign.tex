@@ -1,5 +1,87 @@
 \chapter{System Design}
 % -- C
+\section{Back-end Systems}
+\subsection{Norton}
+Vertex relies on a it's API backend(code-named "Norton"). Norton is written in Python using Flask — a very popular web micro framework. Out of the box Flask comes with far fewer bells and whistles than other similar Python frameworks such as Django however it is much more lightweight and has less dependencies. Flask specialises in preforming as a basic web framework that can be further extended as needed using a plethora of community extensions. Vertex uses one such extension called Connexion. Connexion builds upon Flask and automatically handles HTTP requests in accordance with an OpenAPI file. Connexion automatically routes incoming requests by parsing the requested path and invoking the correct Flask view. The OpenAPI spec has a field called `operationId` which is used to determine which view should be called. This OpenAPI-centric development approach removed the need to manually create individual routing for each endpoint in a typical Flask fashion. It also helped make the code-base more maintainable as it uses the OpenAPI file as the canonical source for the API design. Using the OpenAPI file as the absolute source of truth allows operations such as routing to be updated in one place without the need to alter any additional routing files. A basic Flask / Connexion skeleton can automatically be generated from the OpenAPI file. This was done to generate the initial Vertex prototyping phase as it automatically included relevant documentation from OpenAPI file such as endpoint descriptions as well as expected payloads and return types.
+
+
+\subsection{Norton Schema}
+The Norton API is RESTful by design. There are three main resources in the API scheme.
+\begin{itemize}
+\item Users: Users consist of an `id` and a `name`. The `id` is used to uniquely identify the user and the name is a
+  human-readable intended to be read by other users.
+\item Channels: Each Channel has an `id` used to uniquely identify it, a `name` which is displayed to the users and a `type`
+  of either `VOICE` or `TEXT` to indicate the channel's use.
+\item Messages: Each Message has an associated `author` i.e. the `id` of the User than sent the message, a `channel` i.e.
+  the `id` of the Channel the message belongs to, `content` the actual content of the message e.g. "Hello World", an
+  `id` each message is given a unique identifier, and a `timestamp` i.e. the number of seconds since the Unix epoch.
+\end{itemize}
+
+There are 10 paths within the API. Two used for user creation and authentication i.e. `/login`, `/register` and the rest
+are used to access the above resources.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/ApiRoutes.png}
+    \caption{API Paths}
+    \label{image:models}
+\end{figure}
+
+New users can be registered by making a HTTP POST request to the `/register` endpoint containing a payload specifying an
+unregistered username, and a password. Once registered users can login by posting the same payload to the `/login`
+endpoint. When a user is logs in with valid credentials a they are returned a `session\_id` cookie. This cookie is
+required to access all non-authentication endpoints and should be presented with all future requests. The same cookie is
+used to authenticate with the Notification Messaging System.
+
+The `/channels` and `/users` are very simple endpoints that expose access to the users and channels in the database.
+Both endpoints return list of their associated types and can return a single entity if an `id` is specified in the form
+`/endpoint/id`.
+
+The users are members of certain channel can be found as a sub-collection of the channel endpoint i.e.
+`/channels/id/members` will act similarly to `/users` but will only return users who are members of the specified
+channel. The messages in a channel are also a sub-collection of the channel endpoint and can be accessed in a similar
+fashion at `/channel/id/messages`
+
+\subsection{Notification Messaging System}
+The Notification Messaging System(NMS) is a sub-component of Norton. It runs as it's own process an keeps the server and
+clients states in check. When the client first connects to the Norton it fetches the required resources e.g. the
+channels available on the server, the messages in a chat, etc. However the client has no way of knowing if the state is
+ever updated; NMS solves this. The NMS has a Secure Websocket that client's can listen on for changes in state. If a
+change occurs server-side that a client needs to be made aware of it can dispatch a notification to the specific client
+to update the state it is missing. For instance if a user joins a channel a notification is dispatched to all other
+users of the channel that they need to update their members list for that channel. This system allows for clients to be
+inform of state change without needing to consistently poll the database. Messages are dispatched based on the users'
+ids. The client authenticates with the Websocket by providing its `session\_id` cookie and is returned a list of
+notifications.
+
+\subsection{Notification Structure}
+Each notification will be sent as JSON and consist of three key/value pairs:
+\begin{enumerate}
+\item Target: The target is the User's id that the message is intended for. This is used primarily to route messages to each user. For all intents and purposes the target is mostly irrelevant from the clients perspective.
+\item Type: The message type is used to identify the appropriate update method e.g. `get\_channels` would indicate that clients channels need updating and the payload would indicate which channels need refreshing.
+\item Payload: The payload is the data needed to complete the update functionality. e.g. a payload of `{"user": 100, "channel": 201}` with a type of `add\_user\_to\_channel` would indicate that user `100` has been added to channel `201`
+\end{enumerate}
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+\thead{Target} & \thead{Type} & \thead{Payload} \\ 
+                \hline
+101    & add\_user\_to\_channel  & \{“user”: 100, “channel”: 201\}    \\ \hline
+101    & create\_channel         & \{“channel”: 1011\}                \\ \hline
+106    & delete\_channel         & \{“channel”: 1015\}                \\ \hline
+101    & delete\_message         & \{“channel”: 201, “message”: 320\} \\ \hline
+101    & remove\_channel\_member & \{“channel”: 999, “message”: 100\} \\ \hline
+101    & update\_channel         & \{“channel”: 999\}                 \\ \hline
+101    & update\_message         & \{“channel”: 999, “message”: 321\} \\ \hline
+\end{tabular}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/Norton.png}
+    \caption{Notification Messaging System}
+    \label{image:models}
+\end{figure}
+
 \section{Creating Main Business Logic for Vertex}
 \subsection{Models}
 Vertex uses five models which are implemented from the Norton-API client-stubs. These stubs were generated from OpenAPI specification for the back-end python server, which has been aliased as Norton.
@@ -16,14 +98,7 @@ See Figure~\ref{image:models}.
 
 \subsection{View Models}
 A view model's purpose is to take data from a source and put it into a presentable form that the UI can interpret.
-\\ Vertex uses four view-models to handle CRUD (Create, Read, Update, Delete) operations and update state figure~\ref{image:vertexArch}. To understand how one works see figure~\ref{image:channelViewModel} for a breakdown of the class.
-
-\begin{figure}[h!]
-    \caption{Vertex Architecture}
-    \label{image:vertexArch}
-    \centering
-    \includegraphics[width=1.0\textwidth]{images/vertex_arch.png}
-\end{figure}
+\\ Vertex uses four view-models to handle CRUD (Create, Read, Update, Delete) operations and update state. To understand how one works see figure~\ref{image:channelViewModel} for a breakdown of the class.
 
 \begin{figure}[h!]
     \caption{Channel View Model Code Example}
@@ -305,14 +380,14 @@ Peers need to be able to exchange ICE candidates to be able to create a direct c
 Each ICE message suggests a communication protocol (TCP or UDP), IP address, port number and connection type along with other information needed to link two computers together.
 
 \subsubsection {Connection Termination}
-This is not an essential part of the protocol, but rather to allow the clients to update the state of their application when a call ends
+This is not an essential part of the protocol, but rather to allow the clients to update the state of their application when a call ends. It works well to send a message to the peers a message that the call has ended.
 \begin{itemize}
     \item type - bye
     \item session\_id - This is made when two peers connect to each other. It is both of their ids with a - to delimit them.
     \item from - id of the peer that sent the bye message.
 \end{itemize}
 
-The session is split up so two ids are available and a “bye” message is sent to both.
+The session is slip up so two id are available and a “bye” message is sent to both.
 \\ The WebRTC signalling server was developed using Typescript and Node, getting into the code firstly a secure websocket(WSS) needed to be defined as WebRTC requires a secure connection to exchange data between peers that are looking to communicate. 
 \\ To create a secure websocket a HTTPS server needs to be created first with SSL
 Certificates, this server will just a text message if routed to in a web browser. 
@@ -347,14 +422,14 @@ Note the following in figure~\ref{image:webRTCSigServSwitchCode}:
 \end{enumerate}
 
 \subsection{WebRTC Implementation in Flutter}
-Implementing WebRTC was aided with the flutter-webRtc\cite{FlutterWebRTC}, developed by CloudWebRTC\cite{cloudWeb}. The package supports Android, iOS, Web and MacOS and its feature set for all those platforms are:
+Implementing WebRTC was aided with the flutter-webRTC package[ADD ME: 3], developed by CloudWebRTC[ADD ME: 4]. The package supports Android, iOS, Web and MacOS and its feature set for all those platforms are:
 \begin{enumerate}
     \item Audio/Voice Calls
     \item Data Channel
     \item Screen Capture
 \end{enumerate}
-The package is imported into the project by listing it as a dependency in the applications pubspec file. CloudWebRTC have a flutter-webrtc-demo available on their git repository\cite{webrtc-demo} which code from there was based on and adapted to use in Vertex.
-\\ Vertex allows two peers to communicate via video call or voice call, in order for peers to communicate they must first connect to a signalling server. 
+The package is imported into the project by listing it as a dependency in the applications pubspec file. CloudWebRTC have a flutter-webrtc-demo available on their git repository[ADD ME: 5] which code from there was based on and adapted to use in Vertex.
+\\ Vertex allows two peers to communicate via video call or voice call, in order for peers to communicate they must first connect to a signalling server.
 \\ As talked about in section~\ref{handleStateWebRTC}, a websocket is used to connect Vertex to the signalling server to send and receive messages. 
 \\ When the client connects to the server it sends information about itself to the server so other peers can see it listed as somebody to connect to. 
 
@@ -407,6 +482,74 @@ The remote description is set and finally the create answer function is called w
 
 As previously discussed in  section~\ref{handleStateWebRTC}, all state is managed in the view class where a switch statement listens to signalling state in the callback function in the signaling class.
 \\ Finally for WebRTC when a peer wishes to end a class with a remote peer a bye message is sent to the signaling server where that will send the message onto the remote peer as well as return it to the local peer so both peers can update their applications state and close the connection.  
+
+
+
+% -- M
+\section{Screen Shots}
+Login Page See Figure~\ref{image:loginPage}
+\begin{figure}[h!]
+    \caption{Login Page}
+    \label{image:loginPage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/loginPage.png}
+\end{figure}
+
+Register Page See Figure~\ref{image:registerPage}
+\begin{figure}[h!]
+    \caption{Register Page}
+    \label{image:registerPage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/registerPage.png}
+\end{figure}
+
+Home Page See Figure~\ref{image:homePage}
+\begin{figure}[h!]
+    \caption{Home Page}
+    \label{image:homePage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/homeScreen.png}
+\end{figure}
+
+Peer Connection Lobby See Figure~\ref{image:peerConnectionLobby}
+\begin{figure}[h!]
+    \caption{Peer Connection Lobby}
+    \label{image:peerConnectionLobby}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/callLobby.png}
+\end{figure}
+
+Successful WebRTC Functionality See Figure~\ref{image:webRTCProof}
+\begin{figure}[h!]
+    \caption{Successful WebRTC Functionality}
+    \label{image:webRTCProof}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/webRTCProof.png}
+\end{figure}
+
+Channel Creation See Figure~\ref{image:channelCreation}
+\begin{figure}[h!]
+    \caption{Channel Creation}
+    \label{image:channelCreation}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/channelCreation.png}
+\end{figure}
+
+Channel Deletion See Figure~\ref{image:channelDeletion}
+\begin{figure}[h!]
+    \caption{Channel Deletion}
+    \label{image:channelDeletion}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/channelDeletion.png}
+\end{figure}
+
+Settings Page See Figure~\ref{image:settingsPage}
+\begin{figure}[h!]
+    \caption{Settings Page}
+    \label{image:settingsPage}
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/pageScreenshots/settingsPage.png}
+\end{figure}
 
 
 \section{Database}
